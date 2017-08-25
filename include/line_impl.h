@@ -25,82 +25,22 @@
 
 #pragma once
 
-template <typename TriangleConsumer>
-struct Stroker
+
+
+inline void Line::normalize()
 {
+    float len = length();
+    float dx = x1 - x0;
+    float dy = y1 - y0;
+    x1 = x0 + dx / len;
+    y1 = y0 + dy / len;
+}
 
 
 
-    // ********************
-    // Public enums
-    //
-
-    enum CapStyle {
-        FlatCap,
-        SquareCap,
-        RoundCap
-    };
-
-    enum JoinStyle {
-        BevelJoin,
-        MiterJoin,
-        RoundJoin
-    };
-
-
-
-    // ********************
-    // Read/Write Members
-    //
-
-    JoinStyle joinStyle = BevelJoin;
-    CapStyle capStyle   = FlatCap;
-    float width         = 1.0f;
-
-    TriangleConsumer consumer;
-
-
-
-    // ********************
-    // API
-    //
-
-    Stroker();
-
-    void moveTo(float x, float y);
-    void lineTo(float x, float y);
-    void close();
-    void finish();
-
-    void reset();
-
-
-
-    // ********************
-    // Internals
-    //
-
-    enum SegmentType {
-        InvalidType,
-        MoveToSegment,
-        LineToSegment
-    };
-
-    struct Segment {
-        float x;
-        float y;
-        float width;
-
-        SegmentType type : 2;
-        JoinStyle joinStyle : 2;
-        CapStyle capStyle : 2;
-
-        unsigned int reserved : 26;
-    };
-
-    void shift(float x, float y, SegmentType type);
-
-    Segment m_current;
-    Segment m_last;
-    Segment m_first;
-};
+inline float Line::length() const
+{
+    float dx = x1 - x0;
+    float dy = y1 - y0;
+    return std::sqrt(dx * dx + dy * dy);
+}
