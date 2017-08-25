@@ -25,13 +25,17 @@
 
 #pragma once
 
+#include <cmath>
 #include <cstring>
 
 namespace Quill {
 
-    #include "trapezoid.h"
+    #include "triangle.h"
+    #include "line.h"
+
     #include "stroker.h"
 
+    #include "line_impl.h"
     #include "stroker_impl.h"
 
 };

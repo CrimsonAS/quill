@@ -14,6 +14,7 @@ int main(int argc, char **argv)
     stroker.moveTo(100, 100);
     stroker.lineTo(200, 100);
     stroker.lineTo(300, 200);
+    stroker.finish();
 
     return 0;
 }

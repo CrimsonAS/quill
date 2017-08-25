@@ -25,7 +25,7 @@
 
 #pragma once
 
-template <typename TrapezoidConsumer>
+template <typename TriangleConsumer>
 struct Stroker
 {
     enum CapStyle {
@@ -45,7 +45,7 @@ struct Stroker
     CapStyle capStyle   = FlatCap;
     float width         = 1.0f;
 
-    TrapezoidConsumer consumer;
+    TriangleConsumer consumer;
 
     // API
     Stroker();
@@ -53,6 +53,7 @@ struct Stroker
     void moveTo(float x, float y);
     void lineTo(float x, float y);
     void close();
+    void finish();
 
     void reset();
 
@@ -79,4 +80,5 @@ struct Stroker
 
     Segment m_current;
     Segment m_last;
+    Segment m_first;
 };

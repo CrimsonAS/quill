@@ -27,12 +27,18 @@
 
 namespace Quill
 {
-    struct Trapezoid
+    struct Triangle
     {
-        struct {
-            float y = 0;
-            float x0 = 0;
-            float x1 = 0;
-        } top, bottom;
+        // Read/Write members
+        float x0 = 0.0f;
+        float y0 = 0.0f;
+        float x1 = 0.0f;
+        float y1 = 0.0f;
+        float x2 = 0.0f;
+        float y2 = 0.0f;
+
+        bool edge01 = false;
+        bool edge02 = false;
+        bool edge12 = false;
     };
 };

@@ -26,17 +26,16 @@
 #pragma once
 
 
-
-template <typename TrapezoidConsumer>
-Stroker<TrapezoidConsumer>::Stroker()
+template <typename T>
+Stroker<T>::Stroker()
 {
     reset();
 }
 
 
 
-template <typename TrapezoidConsumer>
-void Stroker<TrapezoidConsumer>::shift(float x, float y, SegmentType type)
+template <typename TriangleConsumer>
+void Stroker<TriangleConsumer>::shift(float x, float y, SegmentType type)
 {
     m_last = m_current;
     m_current = {
@@ -51,35 +50,44 @@ void Stroker<TrapezoidConsumer>::shift(float x, float y, SegmentType type)
 
 
 
-template <typename TrapezoidConsumer>
-void Stroker<TrapezoidConsumer>::moveTo(float x, float y)
+template <typename TriangleConsumer>
+void Stroker<TriangleConsumer>::moveTo(float x, float y)
 {
     shift(x, y, MoveToSegment);
+    m_first = m_current;
 }
 
 
 
-template <typename TrapezoidConsumer>
-void Stroker<TrapezoidConsumer>::lineTo(float x, float y)
+template <typename TriangleConsumer>
+void Stroker<TriangleConsumer>::lineTo(float x, float y)
 {
     shift(x, y, LineToSegment);
 }
 
 
 
-template <typename TrapezoidConsumer>
-void Stroker<TrapezoidConsumer>::close(float x, float y)
+template <typename TriangleConsumer>
+void Stroker<TriangleConsumer>::close()
 {
 }
 
 
 
-template <typename TrapezoidConsumer>
-void Stroker<TrapezoidConsumer>::reset(float x, float y)
+template <typename TriangleConsumer>
+void Stroker<TriangleConsumer>::finish()
+{
+}
+
+
+
+template <typename TriangleConsumer>
+void Stroker<TriangleConsumer>::reset()
 {
     width = 1;
     joinStyle = BevelJoin;
     capStyle = FlatCap;
-    memset(&m_current, 0, sizeof(Segment));
-    memset(&m_last, 0, sizeof(Segment));
+    std::memset(&m_current, 0, sizeof(Segment));
+    std::memset(&m_last, 0, sizeof(Segment));
+    std::memset(&m_first, 0, sizeof(Segment));
 }
