@@ -27,6 +27,22 @@
 
 
 
+inline Line::Line()
+{
+}
+
+
+
+inline Line::Line(float x0_, float y0_, float x1_, float y1_)
+    : x0(x0_)
+    , y0(y0_)
+    , x1(x1_)
+    , y1(y1_)
+{
+}
+
+
+
 inline void Line::normalize()
 {
     float len = length();
@@ -43,4 +59,12 @@ inline float Line::length() const
     float dx = x1 - x0;
     float dy = y1 - y0;
     return std::sqrt(dx * dx + dy * dy);
+}
+
+
+
+inline std::ostream &operator<<(std::ostream &o, Line l)
+{
+    o << "line(" << l.x0 << "," << l.y0 << " -> " << l.x1 << "," << l.y1 << ")";
+    return o;
 }

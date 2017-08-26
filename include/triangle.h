@@ -25,20 +25,25 @@
 
 #pragma once
 
-namespace Quill
+struct Triangle
 {
-    struct Triangle
-    {
-        // Read/Write members
-        float x0 = 0.0f;
-        float y0 = 0.0f;
-        float x1 = 0.0f;
-        float y1 = 0.0f;
-        float x2 = 0.0f;
-        float y2 = 0.0f;
+    float x0 = 0.0f;
+    float y0 = 0.0f;
+    float x1 = 0.0f;
+    float y1 = 0.0f;
+    float x2 = 0.0f;
+    float y2 = 0.0f;
 
-        bool edge01 = false;
-        bool edge02 = false;
-        bool edge12 = false;
-    };
+    bool edge01 = false;
+    bool edge02 = false;
+    bool edge12 = false;
+
+    Triangle();
+    Triangle(float x0, float y0, float x1, float y1, float x2, float y2, bool edge01 = false, bool edge02 = false, bool edge12 = false);
+
+    void sort();
 };
+
+std::ostream &operator<<(std::ostream &o, Triangle t);
+
+

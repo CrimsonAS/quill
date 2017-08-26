@@ -25,12 +25,12 @@
 
 #pragma once
 
-template <typename ScanlineConsumer>
+template <typename SpansConsumer>
 struct MonoRasterizer
 {
     void operator()(Triangle t);
 
-    ScanlineConsumer scan;
+    SpansConsumer consumer;
 
     // ********************
     // Internals

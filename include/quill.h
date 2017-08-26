@@ -25,17 +25,30 @@
 
 #pragma once
 
+#include <iostream>
+#include <cassert>
 #include <cmath>
 #include <cstring>
 
 namespace Quill {
 
-    #include "triangle.h"
+    // Delcarations
     #include "line.h"
+    #include "triangle.h"
+    #include "span.h"
+
+    #include "monorasterizer.h"
 
     #include "stroker.h"
 
+    // Implementations
     #include "line_impl.h"
+    #include "triangle_impl.h"
+    #include "span_impl.h"
+
+    #include "monorasterizer_impl.h"
+
     #include "stroker_impl.h"
+
 
 };

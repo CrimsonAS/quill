@@ -27,21 +27,16 @@
 
 struct Line
 {
-    // ********************
-    // Read/Write Members
-    //
+    Line();
+    Line(float x0, float y0, float x1, float y1);
 
     float x0 = 0.0f;
     float y0 = 0.0f;
     float x1 = 0.0f;
     float y1 = 0.0f;
 
-
-
-    // ********************
-    // API
-    //
-
     float length() const;
     void normalize();
 };
+
+std::ostream &operator<<(std::ostream &o, Line l);

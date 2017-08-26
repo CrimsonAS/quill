@@ -28,13 +28,6 @@
 template <typename TriangleConsumer>
 struct Stroker
 {
-
-
-
-    // ********************
-    // Public enums
-    //
-
     enum CapStyle {
         FlatCap,
         SquareCap,
@@ -47,23 +40,11 @@ struct Stroker
         RoundJoin
     };
 
-
-
-    // ********************
-    // Read/Write Members
-    //
-
     JoinStyle joinStyle = BevelJoin;
     CapStyle capStyle   = FlatCap;
     float width         = 1.0f;
 
     TriangleConsumer consumer;
-
-
-
-    // ********************
-    // API
-    //
 
     Stroker();
 
@@ -73,8 +54,6 @@ struct Stroker
     void finish();
 
     void reset();
-
-
 
     // ********************
     // Internals
@@ -98,9 +77,16 @@ struct Stroker
         unsigned int reserved : 26;
     };
 
-    void shift(float x, float y, SegmentType type);
+    void store(float x, float y, SegmentType type);
 
-    Segment m_current;
-    Segment m_last;
-    Segment m_first;
+    void join(Line lastLeft, Line lastRight, Line left, Line right);
+    void emit(Line left, Line right);
+
+    Segment m_lastSegment;
+    Line m_lastLeft;
+    Line m_lastRight;
+
+    Segment m_firstSegment;
+    Line m_firstLeft;
+    Line m_firstRight;
 };

@@ -35,10 +35,9 @@ Stroker<T>::Stroker()
 
 
 template <typename TriangleConsumer>
-void Stroker<TriangleConsumer>::shift(float x, float y, SegmentType type)
+void Stroker<TriangleConsumer>::store(float x, float y, SegmentType type)
 {
-    m_last = m_current;
-    m_current = {
+    m_lastSegment = {
         .x = x,
         .y = y,
         .width = width,
@@ -53,8 +52,10 @@ void Stroker<TriangleConsumer>::shift(float x, float y, SegmentType type)
 template <typename TriangleConsumer>
 void Stroker<TriangleConsumer>::moveTo(float x, float y)
 {
-    shift(x, y, MoveToSegment);
-    m_first = m_current;
+    // std::cout << "moveTo(" << x << ", " << y << ")" << std::endl;
+
+    store(x, y, MoveToSegment);
+    m_firstSegment = m_lastSegment;
 }
 
 
@@ -62,7 +63,54 @@ void Stroker<TriangleConsumer>::moveTo(float x, float y)
 template <typename TriangleConsumer>
 void Stroker<TriangleConsumer>::lineTo(float x, float y)
 {
-    shift(x, y, LineToSegment);
+    assert(m_lastSegment.type != InvalidType);
+
+    Line line(m_lastSegment.x, m_lastSegment.y, x, y);
+    float length = line.length();
+    float ndx = (line.y0 - line.y1) / length;
+    float ndy = (line.x1 - line.x0) / length;
+
+    // std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << length << ", normal=" << ndx << "," << ndy << std::endl;
+
+    float w2 = width / 2;
+    float cw2 = m_lastSegment.width / 2;
+
+    Line right(line.x0 + ndx * cw2,
+               line.y0 + ndy * cw2,
+               line.x1 + ndx * w2,
+               line.y1 + ndy * w2);
+    Line left(line.x0 - ndx * cw2,
+              line.y0 - ndy * cw2,
+              line.x1 - ndx * w2,
+              line.y1 - ndy * w2);
+
+    if (m_lastSegment.type == LineToSegment) {
+        join(m_lastLeft, m_lastRight, left, right);
+    }
+
+    emit(left, right);
+
+    if (m_lastSegment.type == MoveToSegment) {
+        m_firstLeft = left;
+        m_firstRight = right;
+    }
+
+    store(x, y, LineToSegment);
+    m_lastLeft = left;
+    m_lastRight = right;
+
+}
+
+
+
+template <typename TriangleConsumer>
+void Stroker<TriangleConsumer>::join(Line lastLeft, Line lastRight, Line left, Line right)
+{
+    if (joinStyle == BevelJoin) {
+        Line ljoin(lastLeft.x1, lastLeft.y1, left.x0, left.y0);
+        Line rjoin(lastRight.x1, lastRight.y1, right.x0, right.y0);
+        emit(ljoin, rjoin);
+    }
 }
 
 
@@ -70,6 +118,18 @@ void Stroker<TriangleConsumer>::lineTo(float x, float y)
 template <typename TriangleConsumer>
 void Stroker<TriangleConsumer>::close()
 {
+    if (m_lastSegment.type == LineToSegment) {
+        assert(m_firstSegment.type == MoveToSegment);
+        lineTo(m_firstSegment.x, m_firstSegment.y);
+
+        std::cout << " - lineTo(" << m_firstSegment.x << "," << m_firstSegment.y << ")" << std::endl;
+        std::cout << " - lastLeft:   " << m_lastLeft << std::endl
+                  << " - lastRight:  " << m_lastRight << std::endl
+                  << " - firstLeft:  " << m_firstLeft << std::endl
+                  << " - firstRight: " << m_firstRight << std::endl;
+
+        join(m_lastLeft, m_lastRight, m_firstLeft, m_firstRight);
+    }
 }
 
 
@@ -87,7 +147,13 @@ void Stroker<TriangleConsumer>::reset()
     width = 1;
     joinStyle = BevelJoin;
     capStyle = FlatCap;
-    std::memset(&m_current, 0, sizeof(Segment));
-    std::memset(&m_last, 0, sizeof(Segment));
-    std::memset(&m_first, 0, sizeof(Segment));
+    std::memset(&m_lastSegment, 0, sizeof(Segment));
+    std::memset(&m_firstSegment, 0, sizeof(Segment));
+}
+
+template <typename TriangleConsumer>
+void Stroker<TriangleConsumer>::emit(Line left, Line right)
+{
+    consumer(Triangle(right.x0, right.y0, right.x1, right.y1, left.x0, left.y0, true, false, false));
+    consumer(Triangle(left.x0, left.y0, right.x1, right.y1, left.x1, left.y1, false, true, false));
 }

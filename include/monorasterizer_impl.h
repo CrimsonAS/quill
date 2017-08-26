@@ -25,8 +25,8 @@
 
 #pragma once
 
-template <typename ScanlineConsumer>
-void MonoRasterizer<ScanlineConsumer>::operator()(Triangle t)
+template <typename SpansConsumer>
+void MonoRasterizer<SpansConsumer>::operator()(Triangle t)
 {
     t.sort();
 
@@ -70,8 +70,8 @@ void MonoRasterizer<ScanlineConsumer>::operator()(Triangle t)
      }
 }
 
-template <typename ScanlineConsumer>
-void MonoRasterizer<ScanlineConsumer>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
+template <typename SpanConsumer>
+void MonoRasterizer<SpanConsumer>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
 {
      while (y < ymax) {
          int l = (int) (left + 0.5);
@@ -79,7 +79,7 @@ void MonoRasterizer<ScanlineConsumer>::iterate(float &y, float ymax, float left,
          int len = r - l;
          assert(len >= 0);
          if (len > 0) {
-             scan(int(y), l, r-l, 255);
+             consumer(Span(int(y), l, r-l));
          }
          y += 1.0f;
          left += leftIncr;
