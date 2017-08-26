@@ -26,16 +26,16 @@
 #pragma once
 
 
-template <typename T>
-Stroker<T>::Stroker()
+template <typename Rasterizer>
+Stroker<Rasterizer>::Stroker()
 {
     reset();
 }
 
 
 
-template <typename TriangleConsumer>
-void Stroker<TriangleConsumer>::store(float x, float y, SegmentType type)
+template <typename Rasterizer>
+void Stroker<Rasterizer>::store(float x, float y, SegmentType type)
 {
     m_lastSegment = {
         .x = x,
@@ -49,8 +49,8 @@ void Stroker<TriangleConsumer>::store(float x, float y, SegmentType type)
 
 
 
-template <typename TriangleConsumer>
-void Stroker<TriangleConsumer>::moveTo(float x, float y)
+template <typename Rasterizer>
+void Stroker<Rasterizer>::moveTo(float x, float y)
 {
     // std::cout << "moveTo(" << x << ", " << y << ")" << std::endl;
 
@@ -60,8 +60,8 @@ void Stroker<TriangleConsumer>::moveTo(float x, float y)
 
 
 
-template <typename TriangleConsumer>
-void Stroker<TriangleConsumer>::lineTo(float x, float y)
+template <typename Rasterizer>
+void Stroker<Rasterizer>::lineTo(float x, float y)
 {
     assert(m_lastSegment.type != InvalidType);
 
@@ -103,8 +103,8 @@ void Stroker<TriangleConsumer>::lineTo(float x, float y)
 
 
 
-template <typename TriangleConsumer>
-void Stroker<TriangleConsumer>::join(Line lastLeft, Line lastRight, Line left, Line right)
+template <typename Rasterizer>
+void Stroker<Rasterizer>::join(Line lastLeft, Line lastRight, Line left, Line right)
 {
     if (joinStyle == BevelJoin) {
         Line ljoin(lastLeft.x1, lastLeft.y1, left.x0, left.y0);
@@ -115,8 +115,8 @@ void Stroker<TriangleConsumer>::join(Line lastLeft, Line lastRight, Line left, L
 
 
 
-template <typename TriangleConsumer>
-void Stroker<TriangleConsumer>::close()
+template <typename Rasterizer>
+void Stroker<Rasterizer>::close()
 {
     if (m_lastSegment.type == LineToSegment) {
         assert(m_firstSegment.type == MoveToSegment);
@@ -134,15 +134,15 @@ void Stroker<TriangleConsumer>::close()
 
 
 
-template <typename TriangleConsumer>
-void Stroker<TriangleConsumer>::finish()
+template <typename Rasterizer>
+void Stroker<Rasterizer>::finish()
 {
 }
 
 
 
-template <typename TriangleConsumer>
-void Stroker<TriangleConsumer>::reset()
+template <typename Rasterizer>
+void Stroker<Rasterizer>::reset()
 {
     width = 1;
     joinStyle = BevelJoin;
@@ -151,9 +151,9 @@ void Stroker<TriangleConsumer>::reset()
     std::memset(&m_firstSegment, 0, sizeof(Segment));
 }
 
-template <typename TriangleConsumer>
-void Stroker<TriangleConsumer>::emit(Line left, Line right)
+template <typename Rasterizer>
+void Stroker<Rasterizer>::emit(Line left, Line right)
 {
-    consumer(Triangle(right.x0, right.y0, right.x1, right.y1, left.x0, left.y0, true, false, false));
-    consumer(Triangle(left.x0, left.y0, right.x1, right.y1, left.x1, left.y1, false, true, false));
+    rasterizer(Triangle(right.x0, right.y0, right.x1, right.y1, left.x0, left.y0, true, false, false));
+    rasterizer(Triangle(left.x0, left.y0, right.x1, right.y1, left.x1, left.y1, false, true, false));
 }

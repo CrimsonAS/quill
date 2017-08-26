@@ -25,16 +25,57 @@
 
 #pragma once
 
-template <typename FragmentFiller>
-struct MonoRasterizer
+struct RasterBuffer
 {
-    void operator()(Triangle t);
 
-    FragmentFiller fill;
+    int width = 0;
+    int height = 0;
 
-    // ********************
-    // Internals
-    //
+    unsigned int *data = nullptr;
 
-    void iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr);
+    ~RasterBuffer();
+
+    void allocate(int w, int h);
+    void release();
+
+    unsigned int *scanline(int y);
+    void fill(unsigned int value);
 };
+
+RasterBuffer::~RasterBuffer()
+{
+    release();
+}
+
+void RasterBuffer::allocate(int width, int height)
+{
+    assert(!data);
+
+    this->width = width;
+    this->height = height;
+    data = new unsigned int[width * height];
+}
+
+void RasterBuffer::release()
+{
+    delete [] data;
+}
+
+unsigned int *RasterBuffer::scanline(int y)
+{
+    assert(y >= 0);
+    assert(y < height);
+    assert(data);
+
+    return data + y * width;
+}
+
+void RasterBuffer::fill(unsigned int value)
+{
+    for (int y=0; y<height; ++y) {
+        unsigned int *line = scanline(y);
+        for (int x=0; x<width; ++x) {
+            line[x] = value;
+        }
+    }
+}

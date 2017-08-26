@@ -25,7 +25,7 @@
 
 #pragma once
 
-template <typename TriangleConsumer>
+template <typename Rasterizer>
 struct Stroker
 {
     enum CapStyle {
@@ -44,7 +44,7 @@ struct Stroker
     CapStyle capStyle   = FlatCap;
     float width         = 1.0f;
 
-    TriangleConsumer consumer;
+    Rasterizer rasterizer;
 
     Stroker();
 

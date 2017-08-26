@@ -33,7 +33,7 @@ void MonoRasterizer<SpansConsumer>::operator()(Triangle t)
     float y0Floored = std::floor(t.y0);
     float y;
 
-    if (t.y0 - y0Floored < 0.5) {
+    if (t.y0 - y0Floored <= 0.5) {
         y = y0Floored + 0.5;
     } else {
         y = y0Floored + 1.5;
@@ -79,7 +79,7 @@ void MonoRasterizer<SpanConsumer>::iterate(float &y, float ymax, float left, flo
          int len = r - l;
          assert(len >= 0);
          if (len > 0) {
-             consumer(Span(int(y), l, r-l));
+             fill(Span(int(y), l, r-l));
          }
          y += 1.0f;
          left += leftIncr;
