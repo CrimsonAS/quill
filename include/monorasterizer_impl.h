@@ -59,7 +59,6 @@ void MonoRasterizer<SpansConsumer>::operator()(Triangle t)
         float dy12 = (t.y2 - t.y1);
         float dxl = (t.x2 - t.x1) / dy12;
         float dxr = (t.x2 - t.x0) / dy02;
-        float yoffset = y - t.y1;
         float left = t.x2 - (t.y2 - y) * dxl;
         float right = t.x2 - (t.y2 - y) * dxr;
         if (left > right) {
@@ -77,7 +76,7 @@ void MonoRasterizer<SpanConsumer>::iterate(float &y, float ymax, float left, flo
          int l = (int) (left + 0.5);
          int r = (int) (right + 0.5);
          int len = r - l;
-         assert(len >= 0);
+         // assert(len >= 0);
          if (len > 0) {
              fill(Span(int(y), l, r-l));
          }

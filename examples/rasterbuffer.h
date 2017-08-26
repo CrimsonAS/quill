@@ -27,27 +27,26 @@
 
 struct RasterBuffer
 {
-
-    int width = 0;
-    int height = 0;
+    unsigned int width = 0;
+    unsigned int height = 0;
 
     unsigned int *data = nullptr;
 
     ~RasterBuffer();
 
-    void allocate(int w, int h);
+    void allocate(unsigned int w, unsigned int h);
     void release();
 
-    unsigned int *scanline(int y);
+    unsigned int *scanline(unsigned int y);
     void fill(unsigned int value);
 };
 
-RasterBuffer::~RasterBuffer()
+inline RasterBuffer::~RasterBuffer()
 {
     release();
 }
 
-void RasterBuffer::allocate(int width, int height)
+inline void RasterBuffer::allocate(unsigned int width, unsigned int height)
 {
     assert(!data);
 
@@ -56,12 +55,12 @@ void RasterBuffer::allocate(int width, int height)
     data = new unsigned int[width * height];
 }
 
-void RasterBuffer::release()
+inline void RasterBuffer::release()
 {
     delete [] data;
 }
 
-unsigned int *RasterBuffer::scanline(int y)
+inline unsigned int *RasterBuffer::scanline(unsigned int y)
 {
     assert(y >= 0);
     assert(y < height);
@@ -70,11 +69,11 @@ unsigned int *RasterBuffer::scanline(int y)
     return data + y * width;
 }
 
-void RasterBuffer::fill(unsigned int value)
+inline void RasterBuffer::fill(unsigned int value)
 {
-    for (int y=0; y<height; ++y) {
+    for (unsigned int y=0; y<height; ++y) {
         unsigned int *line = scanline(y);
-        for (int x=0; x<width; ++x) {
+        for (unsigned int x=0; x<width; ++x) {
             line[x] = value;
         }
     }
