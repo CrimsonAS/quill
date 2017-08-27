@@ -34,12 +34,8 @@ struct Triangle
     float x2 = 0.0f;
     float y2 = 0.0f;
 
-    bool edge01 = false;
-    bool edge02 = false;
-    bool edge12 = false;
-
     Triangle();
-    Triangle(float x0, float y0, float x1, float y1, float x2, float y2, bool edge01 = false, bool edge02 = false, bool edge12 = false);
+    Triangle(float x0, float y0, float x1, float y1, float x2, float y2);
 
     void sort();
 };

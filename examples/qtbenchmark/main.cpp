@@ -8,14 +8,36 @@ using namespace Quill;
 #include <QtCore>
 #include <QtGui>
 
+const int PEN_WIDTH = 2;
+
+template <typename Rasterizer>
+struct TriangleVsEdge
+{
+    float x0 = 0.0f;
+    float x1 = 1000.0f;
+    float y0 = 0.0f;
+    float y1 = 1000.0f;
+
+    Rasterizer rasterizer;
+
+    void operator()(Triangle t) {
+        if (t.x0 < x0 || t.x1 < x0 || t.x2 < x0
+            || t.x0 > x1 || t.x1 > x1 || t.x2 > x1
+            || t.y0 < y0 || t.y1 < y0 || t.y2 < y0
+            || t.y0 > y1 || t.y1 > y1 || t.y2 > y1)
+            return;
+        rasterizer(t);
+    }
+};
+
 void runQuillBenchmark_segments(int segments)
 {
-    Stroker<MonoRasterizer<SolidColorFiller>> stroker;
-    stroker.rasterizer.fill.value = 0xffffffff;
+    Stroker<TriangleVsEdge<MonoRasterizer<SolidColorFiller>>> stroker;
+    stroker.rasterizer.rasterizer.fill.value = 0xffffffff;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
-    buffer->fill(0xff000000);
+    RasterBuffer *buffer = &stroker.rasterizer.rasterizer.fill.buffer;
     buffer->allocate(1000, 1000);
+    buffer->fill(0xff000000);
 
     QElapsedTimer timer; timer.start();
 
@@ -27,7 +49,7 @@ void runQuillBenchmark_segments(int segments)
 
         stroker.reset();
 
-        stroker.width = 10;
+        stroker.width = PEN_WIDTH;
 
         for (int i=0; i<segments; ++i) {
             float t = (i / float(segments - 1));
@@ -35,7 +57,7 @@ void runQuillBenchmark_segments(int segments)
             float y = cos(t * M_PI * 2 * 8) * t * cy * 0.8 + cy;
 
             if ((i & 0x1) == 0) {
-                stroker.width = 10 + 5 * ((i >> 1) & 0x1);
+                stroker.width = PEN_WIDTH + 2 * ((i >> 1) & 0x1);
                 stroker.moveTo(x, y);
             } else {
                 stroker.lineTo(x, y);
@@ -64,12 +86,12 @@ void runQuillBenchmark_segments(int segments)
 
 void runQuillBenchmark_continuous(int segments)
 {
-    Stroker<MonoRasterizer<SolidColorFiller>> stroker;
-    stroker.rasterizer.fill.value = 0xffffffff;
+    Stroker<TriangleVsEdge<MonoRasterizer<SolidColorFiller>>> stroker;
+    stroker.rasterizer.rasterizer.fill.value = 0xffffffff;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
-    buffer->fill(0xff000000);
+    RasterBuffer *buffer = &stroker.rasterizer.rasterizer.fill.buffer;
     buffer->allocate(1000, 1000);
+    buffer->fill(0xff000000);
 
     QElapsedTimer timer; timer.start();
 
@@ -80,7 +102,7 @@ void runQuillBenchmark_continuous(int segments)
         float cy = buffer->height / 2;
 
         stroker.reset();
-        stroker.width = 10;
+        stroker.width = PEN_WIDTH;
         stroker.moveTo(cx, cy);
 
         for (int i=0; i<segments; ++i) {
@@ -134,7 +156,7 @@ void runQtBenchmark_continuous(int segments)
             path.lineTo(x, y);
         }
 
-        painter.setPen(QPen(Qt::white, 10, Qt::SolidLine, Qt::FlatCap, Qt::BevelJoin));
+        painter.setPen(QPen(Qt::white, PEN_WIDTH, Qt::SolidLine, Qt::FlatCap, Qt::BevelJoin));
         painter.drawPath(path);
 
         ++counter;
@@ -178,7 +200,7 @@ void runQtBenchmark_segments(int segments)
             float y = cos(t * M_PI * 2 * 8) * t * cy * 0.8 + cy;
 
             if ((i & 0x1) == 0) {
-                float width = 10 + 5 * ((i >> 1) & 0x1);
+                float width = PEN_WIDTH + 2 * ((i >> 1) & 0x1);
                 painter.setPen(QPen(Qt::white, width, Qt::SolidLine, Qt::FlatCap, Qt::BevelJoin));
                 first = QPointF(x, y);
             } else {

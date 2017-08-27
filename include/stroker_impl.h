@@ -65,6 +65,9 @@ void Stroker<Rasterizer>::lineTo(float x, float y)
 {
     assert(m_lastSegment.type != InvalidType);
 
+    if (m_lastSegment.x == x && m_lastSegment.y == y)
+        return;
+
     Line line(m_lastSegment.x, m_lastSegment.y, x, y);
     float length = line.length();
     float ndx = (line.y0 - line.y1) / length;
@@ -107,9 +110,8 @@ template <typename Rasterizer>
 void Stroker<Rasterizer>::join(Line lastLeft, Line lastRight, Line left, Line right)
 {
     if (joinStyle == BevelJoin) {
-        Line ljoin(lastLeft.x1, lastLeft.y1, left.x0, left.y0);
-        Line rjoin(lastRight.x1, lastRight.y1, right.x0, right.y0);
-        emit(ljoin, rjoin);
+        emit(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
+             Line(lastRight.x1, lastRight.y1, right.x0, right.y0));
     }
 }
 
@@ -122,11 +124,11 @@ void Stroker<Rasterizer>::close()
         assert(m_firstSegment.type == MoveToSegment);
         lineTo(m_firstSegment.x, m_firstSegment.y);
 
-        std::cout << " - lineTo(" << m_firstSegment.x << "," << m_firstSegment.y << ")" << std::endl;
-        std::cout << " - lastLeft:   " << m_lastLeft << std::endl
-                  << " - lastRight:  " << m_lastRight << std::endl
-                  << " - firstLeft:  " << m_firstLeft << std::endl
-                  << " - firstRight: " << m_firstRight << std::endl;
+        // std::cout << " - lineTo(" << m_firstSegment.x << "," << m_firstSegment.y << ")" << std::endl;
+        // std::cout << " - lastLeft:   " << m_lastLeft << std::endl
+        //           << " - lastRight:  " << m_lastRight << std::endl
+        //           << " - firstLeft:  " << m_firstLeft << std::endl
+        //           << " - firstRight: " << m_firstRight << std::endl;
 
         join(m_lastLeft, m_lastRight, m_firstLeft, m_firstRight);
     }
@@ -154,6 +156,6 @@ void Stroker<Rasterizer>::reset()
 template <typename Rasterizer>
 void Stroker<Rasterizer>::emit(Line left, Line right)
 {
-    rasterizer(Triangle(right.x0, right.y0, right.x1, right.y1, left.x0, left.y0, true, false, false));
-    rasterizer(Triangle(left.x0, left.y0, right.x1, right.y1, left.x1, left.y1, false, true, false));
+    rasterizer(Triangle(right.x0, right.y0, right.x1, right.y1, left.x0, left.y0));
+    rasterizer(Triangle(left.x0, left.y0, right.x1, right.y1, left.x1, left.y1));
 }

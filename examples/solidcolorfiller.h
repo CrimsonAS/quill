@@ -36,24 +36,14 @@ struct SolidColorFiller
 
 inline void SolidColorFiller::operator()(Span span)
 {
-    if (span.y < 0 || span.y >= int(buffer.height)) {
-        return;
-    }
+    assert(span.y >= 0);
+    assert(span.y < int(buffer.height));
+    assert(span.x >= 0);
+    assert(span.x + span.length < buffer.width);
 
-    if (span.x < 0) {
-        span.length += span.x;
-        span.x = 0;
-    }
-
-    if (span.x + span.length >= buffer.width) {
-        span.length = buffer.width - span.x;
-    }
-
-    if (span.length > 0) {
-        unsigned int *sline = buffer.scanline(span.y) + span.x;
-        for (unsigned int x=0; x<span.length; ++x) {
-            sline[x] = value;
-        }
+    unsigned int *sline = buffer.scanline(span.y) + span.x;
+    for (unsigned int x=0; x<span.length; ++x) {
+        sline[x] = value;
     }
 }
 

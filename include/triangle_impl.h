@@ -33,16 +33,13 @@ inline Triangle::Triangle()
 
 
 
-inline Triangle::Triangle(float x0_, float y0_, float x1_, float y1_, float x2_, float y2_, bool edge01_, bool edge02_, bool edge12_)
+inline Triangle::Triangle(float x0_, float y0_, float x1_, float y1_, float x2_, float y2_)
     : x0(x0_)
     , y0(y0_)
     , x1(x1_)
     , y1(y1_)
     , x2(x2_)
     , y2(y2_)
-    , edge01(edge01_)
-    , edge02(edge02_)
-    , edge12(edge12_)
 {
 }
 
@@ -53,17 +50,14 @@ inline void Triangle::sort()
     if (y1 < y0) {
         std::swap(x0, x1);
         std::swap(y0, y1);
-        std::swap(edge02, edge12);
     }
     if (y2 < y0) {
         std::swap(x0, x2);
         std::swap(y0, y2);
-        std::swap(edge01, edge12);
     }
     if (y2 < y1) {
         std::swap(x1, x2);
         std::swap(y1, y2);
-        std::swap(edge01, edge02);
     }
 }
 

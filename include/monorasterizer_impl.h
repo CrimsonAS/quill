@@ -48,8 +48,8 @@ void MonoRasterizer<SpansConsumer>::operator()(Triangle t)
         float dxl = (t.x1 - t.x0) / dy01;
         float dxr = (t.x2 - t.x0) / dy02;
         float yoffset = y - t.y0;
-        float left = t.x0 + dxl * yoffset;
-        float right = t.x0 + dxr * yoffset;
+        float left = t.x0 + dxl * yoffset + 0.5;
+        float right = t.x0 + dxr * yoffset + 0.5;
 
         // std::cout << " - "
         //     << "dy01=" << dy01
@@ -73,8 +73,8 @@ void MonoRasterizer<SpansConsumer>::operator()(Triangle t)
         float dy12 = (t.y2 - t.y1);
         float dxl = (t.x2 - t.x1) / dy12;
         float dxr = (t.x2 - t.x0) / dy02;
-        float left = t.x2 - (t.y2 - y) * dxl;
-        float right = t.x2 - (t.y2 - y) * dxr;
+        float left = t.x2 - (t.y2 - y) * dxl + 0.5;
+        float right = t.x2 - (t.y2 - y) * dxr + 0.5;
         if (left > right) {
             std::swap(left, right);
             std::swap(dxl, dxr);
@@ -87,12 +87,12 @@ template <typename SpanConsumer>
 void MonoRasterizer<SpanConsumer>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
 {
      while (y < ymax) {
-         int l = (int) (left + 0.5);
-         int r = (int) (right + 0.5);
+         int l = (int) (left);
+         int r = (int) (right);
          int len = r - l;
          assert(len >= 0);
          if (len > 0) {
-             fill(Span(int(y), l, r-l));
+             fill(Span(int(y), l, len));
          }
          y += 1.0f;
          left += leftIncr;
