@@ -12,6 +12,3 @@ INCLUDEPATH += . .. ../../include
 SOURCES += main.cpp
 
 DEFINES += NDEBUG
-
-QMAKE_CXXFLAGS += -O3
-QMAKE_CXXFLAGS -= -O2

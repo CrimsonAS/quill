@@ -46,6 +46,8 @@ struct Stroker
 
     Rasterizer rasterizer;
 
+    int triangleCount   = 0;
+
     Stroker();
 
     void moveTo(float x, float y);
@@ -75,6 +77,13 @@ struct Stroker
         CapStyle capStyle : 2;
 
         unsigned int reserved : 26;
+
+        Segment(SegmentType type = InvalidType,
+                float x = 0.0f,
+                float y = 0.0f,
+                float width = 1.0f,
+                JoinStyle joinStyle = BevelJoin,
+                CapStyle capStyle = FlatCap);
     };
 
     void store(float x, float y, SegmentType type);

@@ -26,6 +26,19 @@
 #pragma once
 
 
+
+template <typename Rasterizer>
+Stroker<Rasterizer>::Segment::Segment(SegmentType type, float x, float y, float width, JoinStyle joinStyle, CapStyle capStyle)
+    : x(x)
+    , y(y)
+    , width(width)
+    , type(type)
+    , joinStyle(joinStyle)
+    , capStyle(capStyle)
+{
+}
+
+
 template <typename Rasterizer>
 Stroker<Rasterizer>::Stroker()
 {
@@ -37,14 +50,7 @@ Stroker<Rasterizer>::Stroker()
 template <typename Rasterizer>
 void Stroker<Rasterizer>::store(float x, float y, SegmentType type)
 {
-    m_lastSegment = {
-        .x = x,
-        .y = y,
-        .width = width,
-        .type = type,
-        .joinStyle = joinStyle,
-        .capStyle = capStyle
-    };
+    m_lastSegment = Segment(type, x, y, width, joinStyle, capStyle);
 }
 
 
@@ -149,8 +155,9 @@ void Stroker<Rasterizer>::reset()
     width = 1;
     joinStyle = BevelJoin;
     capStyle = FlatCap;
-    std::memset(&m_lastSegment, 0, sizeof(Segment));
-    std::memset(&m_firstSegment, 0, sizeof(Segment));
+    m_lastSegment = Segment();
+    m_firstSegment = Segment();
+    triangleCount = 0;
 }
 
 template <typename Rasterizer>
@@ -158,4 +165,6 @@ void Stroker<Rasterizer>::emit(Line left, Line right)
 {
     rasterizer(Triangle(right.x0, right.y0, right.x1, right.y1, left.x0, left.y0));
     rasterizer(Triangle(left.x0, left.y0, right.x1, right.y1, left.x1, left.y1));
+
+    triangleCount += 2;
 }
