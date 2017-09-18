@@ -25,9 +25,11 @@
 
 #pragma once
 
-template <typename FragmentFiller>
+template <typename FragmentFiller, typename TriangleType>
 struct MonoRasterizer
 {
+    typedef TriangleType Triangle;
+
     void operator()(Triangle t);
 
     FragmentFiller fill;

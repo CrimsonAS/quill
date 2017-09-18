@@ -30,11 +30,11 @@ struct SolidColorFiller
     RasterBuffer buffer;
     unsigned int value = 0xff000000;
 
-    void operator()(Span span);
+    void operator()(Quill::Span span);
 };
 
 
-inline void SolidColorFiller::operator()(Span span)
+inline void SolidColorFiller::operator()(Quill::Span span)
 {
     assert(span.y >= 0);
     assert(span.y < int(buffer.height));

@@ -25,21 +25,23 @@
 
 #pragma once
 
+template <typename VertexType>
 struct Triangle
 {
-    float x0 = 0.0f;
-    float y0 = 0.0f;
-    float x1 = 0.0f;
-    float y1 = 0.0f;
-    float x2 = 0.0f;
-    float y2 = 0.0f;
+    typedef VertexType Vertex;
 
-    Triangle();
-    Triangle(float x0, float y0, float x1, float y1, float x2, float y2);
+    Vertex a;
+    Vertex b;
+    Vertex c;
+
+    static Triangle create(float ax, float ay, 
+                           float bx, float by, 
+                           float cx, float cy);
 
     void sort();
 };
 
-std::ostream &operator<<(std::ostream &o, Triangle t);
+template <typename Vertex>
+std::ostream &operator<<(std::ostream &o, Triangle<Vertex> t);
 
 

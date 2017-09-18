@@ -34,6 +34,7 @@ namespace Quill {
 
     // Delcarations
     #include "line.h"
+    #include "vertex.h"
     #include "triangle.h"
     #include "span.h"
 
@@ -43,6 +44,7 @@ namespace Quill {
 
     // Implementations
     #include "line_impl.h"
+    #include "vertex_impl.h"
     #include "triangle_impl.h"
     #include "span_impl.h"
 

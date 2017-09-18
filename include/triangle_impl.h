@@ -27,47 +27,41 @@
 
 
 
-inline Triangle::Triangle()
+template <typename Vertex>
+inline Triangle<Vertex> Triangle<Vertex>::create(float ax, float ay, float bx, float by, float cx, float cy)
 {
+    Triangle<Vertex> t;
+    t.a.x = ax;
+    t.a.y = ay;
+    t.b.x = bx;
+    t.b.y = by;
+    t.c.x = cx;
+    t.c.y = cy;
+    return t;
 }
 
 
 
-inline Triangle::Triangle(float x0_, float y0_, float x1_, float y1_, float x2_, float y2_)
-    : x0(x0_)
-    , y0(y0_)
-    , x1(x1_)
-    , y1(y1_)
-    , x2(x2_)
-    , y2(y2_)
+template <typename Vertex>
+inline void Triangle<Vertex>::sort()
 {
-}
-
-
-
-inline void Triangle::sort()
-{
-    if (y1 < y0) {
-        std::swap(x0, x1);
-        std::swap(y0, y1);
+    if (b.y < a.y) {
+        swap(a, b);
     }
-    if (y2 < y0) {
-        std::swap(x0, x2);
-        std::swap(y0, y2);
+    if (c.y < a.y) {
+        swap(a, c);
     }
-    if (y2 < y1) {
-        std::swap(x1, x2);
-        std::swap(y1, y2);
+    if (c.y < b.y) {
+        swap(c, b);
     }
 }
 
 
 
-inline std::ostream &operator<<(std::ostream &o, Triangle t)
+template <typename Vertex>
+inline std::ostream &operator<<(std::ostream &o, Triangle<Vertex> t)
 {
-    o << "triangle(" << t.x0 << "," << t.y0
-      << " - " << t.x1 << "," << t.y1
-      << " - " << t.x2 << "," << t.y2 << ")";
+    o << "triangle(" << t.a << ", " << t.b << ", " << t.c << ")";
     return o;
 }
 

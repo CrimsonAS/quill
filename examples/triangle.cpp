@@ -8,15 +8,14 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    MonoRasterizer<DumpSpans> rasterizer;
+    MonoRasterizer<DumpSpans, Triangle<Vertex2D>> rasterizer;
 
-    Triangle t;
-    t.x0 = 797.141662;
-    t.y0 = 690.499755;
-    t.x1 = 805.431763;
-    t.y1 = 696.086426;
-    t.x2 = 805.291076;
-    t.y2 = 696.295166;
+    Triangle<Vertex2D> t = Triangle<Vertex2D>::create(10, 10, 
+                                                      20, 11,
+                                                      15, 20);
+
+    cout << "before sort: " << t << endl;
+    cout << "after sort : " << t << endl;
 
     rasterizer(t);
 

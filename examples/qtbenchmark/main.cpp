@@ -8,11 +8,15 @@ using namespace Quill;
 #include <QtCore>
 #include <QtGui>
 
-const int PEN_WIDTH = 2;
+static int RUNNING_TIME = 5000;
 
-template <typename Rasterizer>
+const int PEN_WIDTH = 10;
+
+template <typename Rasterizer, typename TriangleType>
 struct TriangleVsEdge
 {
+    typedef TriangleType Triangle;
+
     float x0 = 0.0f;
     float x1 = 1000.0f;
     float y0 = 0.0f;
@@ -21,10 +25,10 @@ struct TriangleVsEdge
     Rasterizer rasterizer;
 
     void operator()(Triangle t) {
-        if (t.x0 < x0 || t.x1 < x0 || t.x2 < x0
-            || t.x0 > x1 || t.x1 > x1 || t.x2 > x1
-            || t.y0 < y0 || t.y1 < y0 || t.y2 < y0
-            || t.y0 > y1 || t.y1 > y1 || t.y2 > y1)
+        if (t.a.x < x0 || t.b.x < x0 || t.c.x < x0
+            || t.a.x > x1 || t.b.x > x1 || t.c.x > x1
+            || t.a.y < y0 || t.b.y < y0 || t.c.y < y0
+            || t.a.y > y1 || t.b.y > y1 || t.c.y > y1)
             return;
         rasterizer(t);
     }
@@ -32,7 +36,7 @@ struct TriangleVsEdge
 
 void runQuillBenchmark_segments(int segments)
 {
-    Stroker<TriangleVsEdge<MonoRasterizer<SolidColorFiller>>> stroker;
+    Stroker<TriangleVsEdge<MonoRasterizer<SolidColorFiller, Triangle<Vertex2D>>, Triangle<Vertex2D>>> stroker;
     stroker.rasterizer.rasterizer.fill.value = 0xffffffff;
 
     RasterBuffer *buffer = &stroker.rasterizer.rasterizer.fill.buffer;
@@ -67,7 +71,7 @@ void runQuillBenchmark_segments(int segments)
         ++counter;
 
         if (counter % 100 == 0)
-            if (timer.elapsed() > 5000)
+            if (timer.elapsed() > RUNNING_TIME)
                 break;
     }
 
@@ -82,11 +86,9 @@ void runQuillBenchmark_segments(int segments)
     image.save(QStringLiteral("quill_segments_%1.png").arg(segments));
 }
 
-
-
 void runQuillBenchmark_continuous(int segments)
 {
-    Stroker<TriangleVsEdge<MonoRasterizer<SolidColorFiller>>> stroker;
+    Stroker<TriangleVsEdge<MonoRasterizer<SolidColorFiller, Triangle<Vertex2D>>, Triangle<Vertex2D>>> stroker;
     stroker.rasterizer.rasterizer.fill.value = 0xffffffff;
 
     RasterBuffer *buffer = &stroker.rasterizer.rasterizer.fill.buffer;
@@ -115,7 +117,7 @@ void runQuillBenchmark_continuous(int segments)
         ++counter;
 
         if (counter % 100 == 0)
-            if (timer.elapsed() > 5000)
+            if (timer.elapsed() > RUNNING_TIME)
                 break;
     }
 
@@ -162,7 +164,7 @@ void runQtBenchmark_continuous(int segments)
         ++counter;
 
         if (counter % 100 == 0)
-            if (timer.elapsed() > 5000)
+            if (timer.elapsed() > RUNNING_TIME)
                 break;
     }
 
@@ -211,7 +213,7 @@ void runQtBenchmark_segments(int segments)
         ++counter;
 
         if (counter % 100 == 0)
-            if (timer.elapsed() > 5000)
+            if (timer.elapsed() > RUNNING_TIME)
                 break;
     }
 
@@ -224,6 +226,71 @@ void runQtBenchmark_segments(int segments)
 
     painter.end();
     image.save(QStringLiteral("qt_segments_%1.png").arg(segments));
+}
+
+void runQtBenchmark_segments_textured(int segments, bool antialiased = false)
+{
+    QImage image(1000, 1000, QImage::Format_RGB32);
+    image.fill(Qt::white);
+
+    QImage texture(64, 64, QImage::Format_Mono);
+    texture.fill(Qt::color0);
+    for (int i=0; i<32 * 32; ++i) {
+        int x = rand() % 64;
+        int y = rand() % 64;
+        texture.setPixel(x, y, Qt::color1);
+    }
+    QBitmap bitmapTexture = QBitmap::fromImage(texture);
+
+    QPainter painter(&image);
+
+    if (antialiased)
+        painter.setRenderHint(QPainter::Antialiasing);
+
+    QElapsedTimer timer; timer.start();
+
+    int counter = 0;
+    while (true) {
+
+        float cx = image.width() / 2;
+        float cy = image.height() / 2;
+
+        QPointF first;
+
+        for (int i=0; i<segments; ++i) {
+            float t = (i / float(segments - 1));
+            float x = sin(t * M_PI * 2 * 8) * t * cx * 0.8 + cx;
+            float y = cos(t * M_PI * 2 * 8) * t * cy * 0.8 + cy;
+
+            if ((i & 0x1) == 0) {
+                float width = PEN_WIDTH + 2 * ((i >> 1) & 0x1);
+                QBrush brush(bitmapTexture);
+                QTransform xform;
+                xform.rotate(i);
+                painter.setPen(QPen(brush, width, Qt::SolidLine, Qt::FlatCap, Qt::BevelJoin));
+                first = QPointF(x, y);
+            } else {
+                painter.drawLine(first, QPointF(x, y));
+            }
+        }
+
+        ++counter;
+
+        if (counter % 100 == 0)
+            if (timer.elapsed() > RUNNING_TIME)
+                break;
+    }
+
+    printf("Qt - line textured segments, AA=%d, %d elements, %d iterations in %dms, %f ops / msec      \n",
+           antialiased,
+           segments,
+           counter,
+           (int) timer.elapsed(),
+           counter / float(timer.elapsed())
+          );
+
+    painter.end();
+    image.save(QStringLiteral("qt_segments_textured_%2_%1.png").arg(segments).arg(antialiased ? "antialiased" : "aliased"));
 }
 
 int main(int argc, char **argv)
@@ -245,6 +312,14 @@ int main(int argc, char **argv)
     runQtBenchmark_segments(100);
     runQtBenchmark_segments(1000);
     runQtBenchmark_segments(10000);
+
+    runQtBenchmark_segments_textured(100);
+    runQtBenchmark_segments_textured(1000);
+    runQtBenchmark_segments_textured(10000);
+
+    runQtBenchmark_segments_textured(100, true);
+    runQtBenchmark_segments_textured(1000, true);
+    runQtBenchmark_segments_textured(10000, true);
 
     return 0;
 }

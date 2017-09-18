@@ -163,8 +163,8 @@ void Stroker<Rasterizer>::reset()
 template <typename Rasterizer>
 void Stroker<Rasterizer>::emit(Line left, Line right)
 {
-    rasterizer(Triangle(right.x0, right.y0, right.x1, right.y1, left.x0, left.y0));
-    rasterizer(Triangle(left.x0, left.y0, right.x1, right.y1, left.x1, left.y1));
+    rasterizer(Rasterizer::Triangle::create(right.x0, right.y0, right.x1, right.y1, left.x0, left.y0));
+    rasterizer(Rasterizer::Triangle::create(left.x0, left.y0, right.x1, right.y1, left.x1, left.y1));
 
     triangleCount += 2;
 }

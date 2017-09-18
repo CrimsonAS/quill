@@ -25,31 +25,32 @@
 
 #pragma once
 
-template <typename SpansConsumer>
-void MonoRasterizer<SpansConsumer>::operator()(Triangle t)
+template <typename SpansConsumer, typename TriangleType>
+void MonoRasterizer<SpansConsumer, TriangleType>::operator()(TriangleType t)
 {
     t.sort();
 
-    float y0Floored = std::floor(t.y0);
+    float y0Floored = std::floor(t.a.y);
     float y;
 
-    if (t.y0 - y0Floored <= 0.5) {
+    if (t.a.y - y0Floored <= 0.5) {
         y = y0Floored + 0.5;
     } else {
         y = y0Floored + 1.5;
     }
 
-    // std::cout << t << std::endl;
+    // std::cout << "rasterizing: " << t << " " << a << " " << b << " " << c << std::endl;
     // std::cout << " - y=" << y << ", y0Floored=" << y0Floored << std::endl;
 
-    if (t.y0 != t.y1) {
-        float dy01 = (t.y1 - t.y0);
-        float dy02 = (t.y2 - t.y0);
-        float dxl = (t.x1 - t.x0) / dy01;
-        float dxr = (t.x2 - t.x0) / dy02;
-        float yoffset = y - t.y0;
-        float left = t.x0 + dxl * yoffset + 0.5;
-        float right = t.x0 + dxr * yoffset + 0.5;
+    if (t.a.y != t.b.y) {
+
+        float dy01 = (t.b.y - t.a.y);
+        float dy02 = (t.c.y - t.a.y);
+        float dxl = (t.b.x - t.a.x) / dy01;
+        float dxr = (t.c.x - t.a.x) / dy02;
+        float yoffset = y - t.a.y;
+        float left = t.a.x + dxl * yoffset + 0.5;
+        float right = t.a.x + dxr * yoffset + 0.5;
 
         // std::cout << " - "
         //     << "dy01=" << dy01
@@ -65,26 +66,26 @@ void MonoRasterizer<SpansConsumer>::operator()(Triangle t)
             std::swap(left, right);
             std::swap(dxl, dxr);
         }
-        iterate(y, t.y1, left, right, dxl, dxr);
+        iterate(y, t.b.y, left, right, dxl, dxr);
     }
 
-    if (t.y1 != t.y2) {
-        float dy02 = (t.y2 - t.y0);
-        float dy12 = (t.y2 - t.y1);
-        float dxl = (t.x2 - t.x1) / dy12;
-        float dxr = (t.x2 - t.x0) / dy02;
-        float left = t.x2 - (t.y2 - y) * dxl + 0.5;
-        float right = t.x2 - (t.y2 - y) * dxr + 0.5;
+    if (t.b.y != t.c.y) {
+        float dy02 = (t.c.y - t.a.y);
+        float dy12 = (t.c.y - t.b.y);
+        float dxl = (t.c.x - t.b.x) / dy12;
+        float dxr = (t.c.x - t.a.x) / dy02;
+        float left = t.c.x - (t.c.y - y) * dxl + 0.5;
+        float right = t.c.x - (t.c.y - y) * dxr + 0.5;
         if (left > right) {
             std::swap(left, right);
             std::swap(dxl, dxr);
         }
-        iterate(y, t.y2, left, right, dxl, dxr);
+        iterate(y, t.c.y, left, right, dxl, dxr);
      }
 }
 
-template <typename SpanConsumer>
-void MonoRasterizer<SpanConsumer>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
+template <typename SpanConsumer, typename Triangle>
+void MonoRasterizer<SpanConsumer, Triangle>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
 {
      while (y < ymax) {
          int l = (int) (left);

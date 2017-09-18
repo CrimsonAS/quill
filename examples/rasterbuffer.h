@@ -62,7 +62,6 @@ inline void RasterBuffer::release()
 
 inline unsigned int *RasterBuffer::scanline(unsigned int y)
 {
-    assert(y >= 0);
     assert(y < height);
     assert(data);
 

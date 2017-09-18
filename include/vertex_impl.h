@@ -36,7 +36,7 @@ void swap(Vertex2D &a, Vertex2D &b)
 
 std::ostream &operator<<(std::ostream &o, Vertex2D v)
 {
-    o << "vertex(" << v.x << "," << v.y << ")";
+    o << "[x=" << v.x << ", y=" << v.y << "]";
     return o;
 }
 

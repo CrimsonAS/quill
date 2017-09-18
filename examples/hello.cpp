@@ -49,7 +49,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    Stroker<MonoRasterizer<SolidColorFiller>> stroker;
+    Stroker<MonoRasterizer<SolidColorFiller, Triangle<Vertex2D>>> stroker;
 
     SolidColorFiller *fill = &stroker.rasterizer.fill;
     fill->value = 0xffe0b0a0;
@@ -61,6 +61,7 @@ int main(int argc, char **argv)
     stroker.width = 16;
     stroker.moveTo(10, 10);
     stroker.lineTo(90, 10);
+    stroker.width = 8;
     stroker.lineTo(90, 90);
     stroker.lineTo(10, 90);
     stroker.close();
