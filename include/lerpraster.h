@@ -25,10 +25,15 @@
 
 #pragma once
 
-Span::Span(int y_, int x_, unsigned int length_, unsigned int coverage_)
-    : y(y_)
-    , x(x_)
-    , length(length_)
-    , coverage(coverage_)
+template <typename FillFunction>
+struct LerpRaster
 {
-}
+    typedef Triangle<Vertex<typename FillFunction::VertexData>> T;
+    typedef Vertex<typename FillFunction::VertexData> V;
+    typedef typename FillFunction::VertexData VD;
+
+    void operator()(T t);
+
+    FillFunction fill;
+};
+
