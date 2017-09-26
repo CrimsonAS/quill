@@ -25,18 +25,18 @@
 
 #pragma once
 
-struct SolidColorFiller
+struct SolidColorFill
 {
-    typedef Quill::NoData VertexData;
+    typedef Quill::VaryingNoop Varyings;
 
     RasterBuffer buffer;
     unsigned int value = 0xff000000;
 
-    void operator()(Quill::Vertex<Quill::NoData> pos, unsigned int length, Quill::NoData);
+    void operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop);
 };
 
 
-inline void SolidColorFiller::operator()(Quill::Vertex<Quill::NoData> pos, unsigned int length, Quill::NoData)
+inline void SolidColorFill::operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop)
 {
     assert(pos.y >= 0);
     assert(pos.y < int(buffer.height));

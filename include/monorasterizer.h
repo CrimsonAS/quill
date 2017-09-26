@@ -28,10 +28,11 @@
 template <typename FillFunction>
 struct MonoRasterizer
 {
-    typedef Triangle<Vertex<typename FillFunction::VertexData>> T;
-    typedef Vertex<typename FillFunction::VertexData> V;
+    typedef typename FillFunction::Varyings Varyings;
+    typedef BasicVertex<Varyings> Vertex;
+    typedef Quill::Triangle<Vertex> Triangle;
 
-    void operator()(T t);
+    void operator()(Triangle t);
 
     FillFunction fill;
 

@@ -10,52 +10,17 @@ using namespace Quill;
 using namespace std;
 
 #include "rasterbuffer.h"
-#include "solidcolorfiller.h"
-
-
-// struct AccumulateInRaster
-// {
-//     RasterBuffer buffer;
-//     unsigned int value;
-
-//     void operator()(Span span);
-// };
-
-
-// void AccumulateInRaster::operator()(Span span)
-// {
-//     if (span.y < 0 || span.y >= buffer.height) {
-//         return;
-//     }
-
-//     if (span.x < 0) {
-//         span.length += span.x;
-//         span.x = 0;
-//     }
-
-//     if (span.x + span.length >= buffer.width) {
-//         span.length = buffer.width - span.x;
-//     }
-
-//     if (span.length > 0) {
-//         unsigned int *sline = buffer.scanline(span.y) + span.x;
-//         for (int x=0; x<span.length; ++x) {
-//             sline[x] += value;
-//         }
-//     }
-// }
-
-
+#include "solidcolorfill.h"
 
 int main(int argc, char **argv)
 {
-    Stroker<LerpRaster<SolidColorFiller>> stroker;
+    Stroker<LerpRaster<SolidColorFill>> stroker;
 
-    SolidColorFiller *fill = &stroker.rasterizer.fill;
+    SolidColorFill *fill = &stroker.rasterizer.fill;
     fill->value = 0xffe0b0a0;
 
     RasterBuffer *buffer = &fill->buffer;
-    buffer->allocate(100, 100);
+    buffer->allocate(400, 400);
     buffer->fill(0xff000000);
 
     stroker.width = 16;

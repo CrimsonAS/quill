@@ -1,6 +1,6 @@
 #include "quill.h"
 #include "rasterbuffer.h"
-#include "solidcolorfiller.h"
+#include "solidcolorfill.h"
 
 #include <chrono>
 
@@ -49,26 +49,26 @@ double stroke_continuous(S *stroker, int width, int height, int segments)
 
 struct LerpFiller
 {
-    typedef Quill::Float2D VertexData;
+    typedef Quill::VaryingUV Varyings;
 
     RasterBuffer buffer;
     unsigned int value = 0xff000000;
 
-    void operator()(Vertex<Float2D> pos, unsigned int length, Float2D dx);
+    void operator()(VertexUV pos, unsigned int length, VaryingUV dx);
 };
 
-inline void LerpFiller::operator()(Vertex<Float2D> pos, unsigned int length, Float2D dx)
+inline void LerpFiller::operator()(VertexUV pos, unsigned int length, VaryingUV dx)
 {
     assert(pos.y >= 0);
     assert(pos.y < int(buffer.height));
     assert(pos.x >= 0);
     assert(pos.x + length < buffer.width);
 
-    Float2D v = pos.data;
+    VaryingUV v = pos.v;
 
     unsigned int *sline = buffer.scanline((int) pos.y) + (int) pos.x;
     for (unsigned int x=0; x<length; ++x) {
-        sline[x] = value + v.x + v.y;
+        sline[x] = value + v.u + v.v;
         v = v + dx;
     }
 }
@@ -93,7 +93,7 @@ void testLerpRasterInterp(int segments)
 
 void testLerpRaster(int segments)
 {
-    Stroker<LerpRaster<SolidColorFiller>> stroker;
+    Stroker<LerpRaster<SolidColorFill>> stroker;
     stroker.rasterizer.fill.value = 0xffffffff;
 
     RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
@@ -109,7 +109,7 @@ void testLerpRaster(int segments)
 
 void testMonoRaster(int segments)
 {
-    Stroker<MonoRasterizer<SolidColorFiller>> stroker;
+    Stroker<MonoRasterizer<SolidColorFill>> stroker;
     stroker.rasterizer.fill.value = 0xffffffff;
 
     RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;

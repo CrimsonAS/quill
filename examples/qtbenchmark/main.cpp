@@ -56,6 +56,11 @@ void runQuillBenchmark_segments(int segments)
         stroker.width = PEN_WIDTH;
 
         for (int i=0; i<segments; ++i) {
+
+            // const int HIT = 92;
+            // if (i != HIT && i != HIT+1)
+            //     continue;
+
             float t = (i / float(segments - 1));
             float x = sin(t * M_PI * 2 * 8) * t * cx * 0.8 + cx;
             float y = cos(t * M_PI * 2 * 8) * t * cy * 0.8 + cy;
@@ -297,29 +302,29 @@ int main(int argc, char **argv)
 {
     QGuiApplication app(argc, argv);
 
-    runQuillBenchmark_continuous(100);
-    runQuillBenchmark_continuous(1000);
-    runQuillBenchmark_continuous(10000);
+    // runQuillBenchmark_continuous(100);
+    // runQuillBenchmark_continuous(1000);
+    // runQuillBenchmark_continuous(10000);
 
     runQuillBenchmark_segments(100);
     runQuillBenchmark_segments(1000);
     runQuillBenchmark_segments(10000);
 
-    runQtBenchmark_continuous(100);
-    runQtBenchmark_continuous(1000);
-    runQtBenchmark_continuous(10000);
+    // runQtBenchmark_continuous(100);
+    // runQtBenchmark_continuous(1000);
+    // runQtBenchmark_continuous(10000);
 
-    runQtBenchmark_segments(100);
-    runQtBenchmark_segments(1000);
-    runQtBenchmark_segments(10000);
+    // runQtBenchmark_segments(100);
+    // runQtBenchmark_segments(1000);
+    // runQtBenchmark_segments(10000);
 
-    runQtBenchmark_segments_textured(100);
-    runQtBenchmark_segments_textured(1000);
-    runQtBenchmark_segments_textured(10000);
+    // runQtBenchmark_segments_textured(100);
+    // runQtBenchmark_segments_textured(1000);
+    // runQtBenchmark_segments_textured(10000);
 
-    runQtBenchmark_segments_textured(100, true);
-    runQtBenchmark_segments_textured(1000, true);
-    runQtBenchmark_segments_textured(10000, true);
+    // runQtBenchmark_segments_textured(100, true);
+    // runQtBenchmark_segments_textured(1000, true);
+    // runQtBenchmark_segments_textured(10000, true);
 
     return 0;
 }
