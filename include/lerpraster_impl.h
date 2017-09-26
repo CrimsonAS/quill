@@ -56,23 +56,25 @@ void LerpRaster<FillFunction>::operator()(T t)
         yc = ycFloored + 0.5;
     }
 
-    //
-    //                       A
-    //                     /   \
-    //                    /     \
-    //                   /       \
-    //                  /         \
-    //                 B   -   -   ACB
-    //                   --__       \
-    //                       --__    \
-    //                           --__ \
-    //                               --C
-    //
+    /*
+     *
+     *         A
+     *       /   \
+     *      /     \
+     *     /       \
+     *    /         \
+     *   B   -   -   ACB
+     *     --__       \
+     *         --__    \
+     *             --__ \
+     *                 --C
+     */
+
 
     // std::cout << "rasterizing: " << t << std::endl;
     // std::cout << " - y=" << y << ", yaFloored=" << yaFloored << std::endl;
 
-    if (y < yb) {
+    if (y <= yb) {
         float dyab = (t.b.y - t.a.y);
         float dyac = (t.c.y - t.a.y);
 
@@ -117,7 +119,7 @@ void LerpRaster<FillFunction>::operator()(T t)
         }
     }
 
-    if (y < yc) {
+    if (y <= yc) {
         float dyac = (t.c.y - t.a.y);
         float dybc = (t.c.y - t.b.y);
 
