@@ -39,6 +39,7 @@ Stroker<Rasterizer>::Segment::Segment(SegmentType type, float x, float y, float 
 }
 
 
+
 template <typename Rasterizer>
 Stroker<Rasterizer>::Stroker()
 {
@@ -163,8 +164,12 @@ void Stroker<Rasterizer>::reset()
 template <typename Rasterizer>
 void Stroker<Rasterizer>::emit(Line left, Line right)
 {
-    rasterizer(Rasterizer::Triangle::create(right.x0, right.y0, right.x1, right.y1, left.x0, left.y0));
-    rasterizer(Rasterizer::Triangle::create(left.x0, left.y0, right.x1, right.y1, left.x1, left.y1));
+    rasterizer(Triangle(Vertex(right.x0, right.y0),
+                        Vertex(right.x1, right.y1),
+                        Vertex(left.x0, left.y0)));
+    rasterizer(Triangle(Vertex(left.x0, left.y0),
+                        Vertex(right.x1, right.y1),
+                        Vertex(left.x1, left.y1)));
 
     triangleCount += 2;
 }

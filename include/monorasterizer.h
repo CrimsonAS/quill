@@ -25,14 +25,15 @@
 
 #pragma once
 
-template <typename FragmentFiller, typename TriangleType>
+template <typename FillFunction>
 struct MonoRasterizer
 {
-    typedef TriangleType Triangle;
+    typedef Triangle<Vertex<typename FillFunction::VertexData>> T;
+    typedef Vertex<typename FillFunction::VertexData> V;
 
-    void operator()(Triangle t);
+    void operator()(T t);
 
-    FragmentFiller fill;
+    FillFunction fill;
 
     // ********************
     // Internals

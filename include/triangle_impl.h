@@ -26,40 +26,34 @@
 #pragma once
 
 
-
-template <typename Vertex>
-inline Triangle<Vertex> Triangle<Vertex>::create(float ax, float ay, float bx, float by, float cx, float cy)
+template <typename VertexType>
+Triangle<VertexType>::Triangle(VertexType a, VertexType b, VertexType c)
+    : a(a)
+    , b(b)
+    , c(c)
 {
-    Triangle<Vertex> t;
-    t.a.x = ax;
-    t.a.y = ay;
-    t.b.x = bx;
-    t.b.y = by;
-    t.c.x = cx;
-    t.c.y = cy;
-    return t;
 }
 
 
 
-template <typename Vertex>
-inline void Triangle<Vertex>::sort()
+template <typename VertexType>
+void Triangle<VertexType>::sort()
 {
     if (b.y < a.y) {
-        swap(a, b);
+        std::swap(a, b);
     }
     if (c.y < a.y) {
-        swap(a, c);
+        std::swap(a, c);
     }
     if (c.y < b.y) {
-        swap(c, b);
+        std::swap(c, b);
     }
 }
 
 
 
-template <typename Vertex>
-inline std::ostream &operator<<(std::ostream &o, Triangle<Vertex> t)
+template <typename VertexType>
+std::ostream &operator<<(std::ostream &o, Triangle<VertexType> t)
 {
     o << "triangle(" << t.a << ", " << t.b << ", " << t.c << ")";
     return o;

@@ -25,8 +25,8 @@
 
 #pragma once
 
-template <typename SpansConsumer, typename TriangleType>
-void MonoRasterizer<SpansConsumer, TriangleType>::operator()(TriangleType t)
+template <typename SpansConsumer>
+void MonoRasterizer<SpansConsumer>::operator()(T t)
 {
     t.sort();
 
@@ -84,8 +84,8 @@ void MonoRasterizer<SpansConsumer, TriangleType>::operator()(TriangleType t)
      }
 }
 
-template <typename SpanConsumer, typename Triangle>
-void MonoRasterizer<SpanConsumer, Triangle>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
+template <typename SpanConsumer>
+void MonoRasterizer<SpanConsumer>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
 {
      while (y < ymax) {
          int l = (int) (left);
@@ -93,7 +93,7 @@ void MonoRasterizer<SpanConsumer, Triangle>::iterate(float &y, float ymax, float
          int len = r - l;
          assert(len >= 0);
          if (len > 0) {
-             fill(Span(int(y), l, len));
+             fill(Vertex2D(l, y), len, NoData());
          }
          y += 1.0f;
          left += leftIncr;

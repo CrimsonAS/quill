@@ -49,7 +49,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    Stroker<MonoRasterizer<SolidColorFiller, Triangle<Vertex2D>>> stroker;
+    Stroker<LerpRaster<SolidColorFiller>> stroker;
 
     SolidColorFiller *fill = &stroker.rasterizer.fill;
     fill->value = 0xffe0b0a0;
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     stroker.lineTo(10, 90);
     stroker.close();
 
-    stbi_write_png("output.png",
+    stbi_write_png("hello.png",
                    buffer->width,
                    buffer->height,
                    4,

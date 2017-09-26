@@ -26,18 +26,158 @@
 #pragma once
 
 
-void swap(Vertex2D &a, Vertex2D &b)
+template <typename Data> Vertex<Data> operator+(Vertex<Data> a, Vertex<Data> b)
 {
-    Vertex2D tmp = a;
-    a = b;
-    b = tmp;
+    return Vertex<Data>(a.x + b.x, a.y + b.y, a.data + b.data);
 }
 
-
-std::ostream &operator<<(std::ostream &o, Vertex2D v)
+template <typename Data> Vertex<Data> operator+(Vertex<Data> a, float x)
 {
-    o << "[x=" << v.x << ", y=" << v.y << "]";
+    return Vertex<Data>(a.x + x,   a.y + x,   a.data + x);
+}
+
+template <typename Data> Vertex<Data> operator+(float x, Vertex<Data> a)
+{
+    return Vertex<Data>(x + a.x,   x + a.y,   x + a.data);
+}
+
+template <typename Data> Vertex<Data> operator-(Vertex<Data> a, Vertex<Data> b)
+{
+    return Vertex<Data>(a.x - b.x, a.y - b.y, a.data - b.data);
+}
+
+template <typename Data> Vertex<Data> operator-(Vertex<Data> a, float x)
+{
+    return Vertex<Data>(a.x - x,   a.y - x),  a.data - x;
+}
+
+template <typename Data> Vertex<Data> operator-(float x, Vertex<Data> a)
+{
+    return Vertex<Data>(x - a.x,   x - a.y),  x - a.data;
+}
+
+template <typename Data> Vertex<Data> operator*(Vertex<Data> a, float x)
+{
+    return Vertex<Data>(a.x * x,   a.y * x,   a.data * x);
+}
+
+template <typename Data> Vertex<Data> operator*(float x, Vertex<Data> a)
+{
+    return Vertex<Data>(x * a.x,   x * a.y,   x * a.data);
+}
+
+template <typename Data> Vertex<Data> operator/(Vertex<Data> a, float x)
+{
+    return Vertex<Data>(a.x / x,   a.y / x ,  a.data / x);
+}
+
+template <typename Data>
+std::ostream &operator<<(std::ostream &o, Vertex<Data> v)
+{
+    o << "[" << v.x << "," << v.y << "," << v.data << "]";
     return o;
 }
 
 
+
+inline Float2D operator+(Float2D a, Float2D b)
+{
+    return Float2D(a.x + b.x, a.y + b.y);
+}
+
+inline Float2D operator+(Float2D a, float x)
+{
+    return Float2D(a.x + x,   a.y + x);
+}
+
+inline Float2D operator+(float x, Float2D a)
+{
+    return Float2D(x + a.x,   x + a.y);
+}
+
+inline Float2D operator-(Float2D a, Float2D b)
+{
+    return Float2D(a.x - b.x, a.y - b.y);
+}
+
+inline Float2D operator-(Float2D a, float x)
+{
+    return Float2D(a.x - x,   a.y - x);
+}
+
+inline Float2D operator-(float x, Float2D a)
+{
+    return Float2D(x - a.x,   x - a.y);
+}
+
+inline Float2D operator*(Float2D a, float x)
+{
+    return Float2D(a.x * x,   a.y * x);
+}
+
+inline Float2D operator*(float x, Float2D a)
+{
+    return Float2D(x * a.x,   x * a.y);
+}
+
+inline Float2D operator/(Float2D a, float x)
+{
+    return Float2D(a.x / x,   a.y / x);
+}
+
+std::ostream &operator<<(std::ostream &o, Float2D v)
+{
+    o << "[" << v.x << "," << v.y << "]"; return o;
+}
+
+
+
+inline NoData operator+(NoData, NoData)
+{
+    return NoData();
+}
+
+inline NoData operator+(NoData, float)
+{
+    return NoData();
+}
+
+inline NoData operator+(float, NoData)
+{
+    return NoData();
+}
+
+inline NoData operator-(NoData, NoData)
+{
+    return NoData();
+}
+
+inline NoData operator-(NoData, float)
+{
+    return NoData();
+}
+
+inline NoData operator-(float, NoData)
+{
+    return NoData();
+}
+
+inline NoData operator*(NoData, float)
+{
+    return NoData();
+}
+
+inline NoData operator*(float, NoData)
+{
+    return NoData();
+}
+
+inline NoData operator/(NoData, float)
+{
+    return NoData();
+}
+
+std::ostream &operator<<(std::ostream &o, NoData)
+{
+    return o;
+}

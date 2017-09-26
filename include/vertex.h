@@ -25,15 +25,32 @@
 
 #pragma once
 
-struct Vertex2D
+
+
+template <typename Data>
+struct Vertex
 {
-    float x = 0.0f;
-    float y = 0.0f;
+    Vertex(float x = 0.0f, float y = 0.0f, Data data = Data()) : x(x), y(y), data(data) { }
+    float x;
+    float y;
+    Data data;
 };
 
-void swap(Vertex2D &a, Vertex2D &b);
-
-std::ostream &operator<<(std::ostream &o, Vertex2D t);
 
 
+struct NoData
+{
 
+};
+
+
+
+struct Float2D {
+    Float2D(float x = 0.0f, float y = 0.0f) : x(x), y(y) { }
+    float x;
+    float y;
+};
+
+
+
+typedef Vertex<NoData> Vertex2D;

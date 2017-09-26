@@ -61,6 +61,9 @@ struct Stroker
     // Internals
     //
 
+    typedef typename Rasterizer::T Triangle;
+    typedef typename Rasterizer::V Vertex;
+
     enum SegmentType {
         InvalidType,
         MoveToSegment,

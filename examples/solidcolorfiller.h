@@ -27,22 +27,24 @@
 
 struct SolidColorFiller
 {
+    typedef Quill::NoData VertexData;
+
     RasterBuffer buffer;
     unsigned int value = 0xff000000;
 
-    void operator()(Quill::Span span);
+    void operator()(Quill::Vertex<Quill::NoData> pos, unsigned int length, Quill::NoData);
 };
 
 
-inline void SolidColorFiller::operator()(Quill::Span span)
+inline void SolidColorFiller::operator()(Quill::Vertex<Quill::NoData> pos, unsigned int length, Quill::NoData)
 {
-    assert(span.y >= 0);
-    assert(span.y < int(buffer.height));
-    assert(span.x >= 0);
-    assert(span.x + span.length < buffer.width);
+    assert(pos.y >= 0);
+    assert(pos.y < int(buffer.height));
+    assert(pos.x >= 0);
+    assert(pos.x + length < buffer.width);
 
-    unsigned int *sline = buffer.scanline(span.y) + span.x;
-    for (unsigned int x=0; x<span.length; ++x) {
+    unsigned int *sline = buffer.scanline((int) pos.y) + (int) pos.x;
+    for (unsigned int x=0; x<length; ++x) {
         sline[x] = value;
     }
 }

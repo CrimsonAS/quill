@@ -28,20 +28,15 @@
 template <typename VertexType>
 struct Triangle
 {
-    typedef VertexType Vertex;
+    VertexType a;
+    VertexType b;
+    VertexType c;
 
-    Vertex a;
-    Vertex b;
-    Vertex c;
-
-    static Triangle create(float ax, float ay, 
-                           float bx, float by, 
-                           float cx, float cy);
+    Triangle(VertexType a, VertexType b, VertexType c);
 
     void sort();
 };
 
-template <typename Vertex>
-std::ostream &operator<<(std::ostream &o, Triangle<Vertex> t);
-
+template <typename VertexType>
+std::ostream &operator<<(std::ostream &o, Triangle<VertexType> t);
 

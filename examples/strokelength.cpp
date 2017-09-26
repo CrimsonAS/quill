@@ -9,207 +9,78 @@
 using namespace Quill;
 using namespace std;
 
-struct Dumper 
+struct Consumer
 {
-    void operator()(Span span) {
-        std::cout << " - y=" << span.y
-                  << ", x=" << span.x
-                  << ", length=" << span.length
-                  << ", coverage=" << span.coverage
-                  << std::endl;
-    }
+    typedef Float2D VertexData;
 
+    RasterBuffer buffer;
+
+    void operator()(Vertex<Float2D>, int length, Float2D dx);
 };
 
-struct VertexXYUV
+
+void Consumer::operator()(Vertex<Float2D> left, int length, Float2D dx)
 {
-    float x = 0.0f;
-    float y = 0.0f;
-    float u = 0.0f;
-    float v = 0.0f;
+    unsigned int *dst = buffer.scanline((int) left.y) + (int) left.x;
 
-    struct Varyings {
-        Varyings(float u, float v) : u(u), v(v) { }
-        float u;
-        float v;
-    };
+    VertexData vd = left.data;
 
-    Varyings varyings() const { return Varyings(u, v); }
-};
-
-VertexXYUV::Varyings operator+(VertexXYUV::Varyings a, VertexXYUV::Varyings b)
-{
-    return VertexXYUV::Varyings(a.u + b.u, a.v + b.v);
-}
-
-VertexXYUV::Varyings operator-(VertexXYUV::Varyings a, VertexXYUV::Varyings b)
-{
-    return VertexXYUV::Varyings(a.u - b.u, a.v - b.v);
-}
-
-VertexXYUV::Varyings operator/(VertexXYUV::Varyings a, float div)
-{
-    return VertexXYUV::Varyings(a.u / div, a.v / div);
-}
-
-VertexXYUV::Varyings operator*(VertexXYUV::Varyings a, float mul)
-{
-    return VertexXYUV::Varyings(a.u * mul, a.v * mul);
-}
-
-void swap(VertexXYUV &a, VertexXYUV &b)
-{
-    VertexXYUV tmp = a;
-    a = b;
-    b = tmp;
-}
-
-std::ostream &operator<<(std::ostream &o, VertexXYUV v)
-{
-    o << "[x=" << v.x << ",y=" << v.y << ",u=" << v.u << ",v=" << v.v << "]";
-    return o;
-}
-
-
-template <typename SpansConsumer, typename VertexType>
-struct LerpRaster
-{
-    typedef VertexType Vertex;
-
-    void operator()(Triangle<VertexType> t);
-
-    SpansConsumer fill;
-
-    // ********************
-    // Internals
-    //
-
-    void iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr);
-};
-
-template <typename SpansConsumer, typename Vertex>
-void LerpRaster<SpansConsumer, Vertex>::operator()(Triangle<Vertex> t)
-{
-    t.sort();
-
-    float yaFloored = std::floor(t.a.y);
-    float y;
-
-    if (t.a.y - yaFloored <= 0.5) {
-        y = y0Floored + 0.5;
-    } else {
-        y = y0Floored + 1.5;
+    for (int i=0; i<length; ++i) {
+        int r = int(255 * vd.x);
+        int b = int(255 * vd.y);
+        dst[i] += 0xff000000 | (r) | (b << 16);
+        dst[i] += 0x00007f00;
+        vd = vd + dx;
     }
-
-
-
-    // std::cout << "rasterizing: " << t << std::endl;
-    // std::cout << " - y=" << y << ", y0Floored=" << y0Floored << std::endl;
-
-    typename Vertex::Varyings va = t.a.varyings();
-    typename Vertex::Varyings vb = t.b.varyings();
-    typename Vertex::Varyings vc = t.c.varyings();
-
-    if (t.a.y != t.b.y) {
-        float dy01 = (t.b.y - t.a.y);
-        float dy02 = (t.c.y - t.a.y);
-        float dxl = (t.b.x - t.a.x) / dy01;
-        float dxr = (t.c.x - t.a.x) / dy02;
-        float yoffset = y - t.a.y;
-        float left = t.a.x + dxl * yoffset + 0.5;
-        float right = t.a.x + dxr * yoffset + 0.5;
-
-        typename Vertex::Varyings vac = (vc - va) * (dy01 / dy02);
-        std::cout << "vac: " << vac.u << ", " << vac.v << endl;
-
-        typename Vertex::Varyings viab = (vb - va) / (t.b.y - t.a.y);
-        std::cout << "viab: " << viab.u << ", " << viab.v << endl;
-        
-        // std::cout << " - "
-        //     << "dy01=" << dy01
-        //     << ", dy02=" << dy02
-        //     << ", dxl=" << dxl
-        //     << ", dxr=" << dxr
-        //     << ", yoffset=" << yoffset
-        //     << ", left=" << left
-        //     << ", right=" << right
-        //     << std::endl;
-
-        if (dxr < dxl) {
-            std::swap(left, right);
-            std::swap(dxl, dxr);
-        }
-        iterate(y, t.b.y, left, right, dxl, dxr);
-    }
-
-    // if (t.b.y != t.c.y) {
-    //     float dy02 = (t.c.y - t.a.y);
-    //     float dy12 = (t.c.y - t.b.y);
-    //     float dxl = (t.c.x - t.b.x) / dy12;
-    //     float dxr = (t.c.x - t.a.x) / dy02;
-    //     float left = t.c.x - (t.c.y - y) * dxl + 0.5;
-    //     float right = t.c.x - (t.c.y - y) * dxr + 0.5;
-    //     if (left > right) {
-    //         std::swap(left, right);
-    //         std::swap(dxl, dxr);
-    //     }
-    //     iterate(y, t.c.y, left, right, dxl, dxr);
-    //  }
 }
 
-// template <typename SpanConsumer, typename Vertex>
-// void LerpRaster<SpanConsumer, Vertex>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
-// {
-
-//     cout << y << " " << ymax << endl;
-
-//     while (y < ymax) {
-//         int l = (int) (left);
-//         int r = (int) (right);
-//         int len = r - l;
-//         assert(len >= 0);
-//         if (len > 0) {
-//             fill(Span(int(y), l, len));
-//         }
-//         y += 1.0f;
-//         left += leftIncr;
-//         right += rightIncr;
-//     }
-// }
 
 int main(int argc, char **argv)
 {
-    LerpRaster<Dumper, VertexXYUV> raster;
+    LerpRaster<SolidColorFiller> raster;
 
-    Triangle<VertexXYUV> t = Triangle<VertexXYUV>::create(5, 0, 0, 10, 10, 20);
-    t.a.u = 0.0f;
-    t.a.v = 0.0f;
-    t.b.u = 1.0f;
-    t.b.v = 0.0f;
-    t.c.u = 0.0f;
-    t.c.v = 1.0f;
+    RasterBuffer *buffer = &raster.fill.buffer;
+    buffer->allocate(100, 100);
+    buffer->fill(0xff000000);
 
-    raster(t);
+    raster.fill.value = 0xffff0000;
 
-    // Stroker<LerpRaster<SolidColorFiller, Triangle<Vertex2D>>> stroker;
+    // raster(Triangle<Vertex<Float2D>>(Vertex<Float2D>(10, 10, Float2D(1, 1)),
+    //                                  Vertex<Float2D>(90, 50, Float2D(1, 0)),
+    //                                  Vertex<Float2D>(40, 90, Float2D(0, 1))));
 
-    // SolidColorFiller *fill = &stroker.rasterizer.fill;
-    // fill->value = 0xffe0b0a0;
+    // raster(Triangle<Vertex<Float2D>>(Vertex<Float2D>(10, 10, Float2D(1, 1)),
+    //                                  Vertex<Float2D>(90, 50, Float2D(1, 0)),
+    //                                  Vertex<Float2D>(95, 5, Float2D(0, 1))));
 
-    // RasterBuffer *buffer = &fill->buffer;
-    // buffer->allocate(100, 100);
-    // buffer->fill(0xff000000);
+    // raster(Triangle<Vertex<Float2D>>(Vertex<Float2D>(10, 10, Float2D(1, 1)),
+    //                                  Vertex<Float2D>(8, 92, Float2D(1, 0)),
+    //                                  Vertex<Float2D>(40, 90, Float2D(0, 1))));
 
-    // stroker.width = 16;
-    // stroker.moveTo(10, 10);
-    // stroker.lineTo(90, 50);
-    // stroker.width = 8;
-    // stroker.lineTo(10, 90);
+    // raster(Triangle<Vertex<Float2D>>(Vertex<Float2D>(93, 93, Float2D(1, 1)),
+    //                                  Vertex<Float2D>(90, 50, Float2D(1, 0)),
+    //                                  Vertex<Float2D>(40, 90, Float2D(0, 1))));
 
-    // stbi_write_png("strokelength.png",
-    //                buffer->width,
-    //                buffer->height,
-    //                4,
-    //                buffer->data,
-    //                buffer->width * sizeof(unsigned int));
+    raster(Triangle<Vertex2D>(Vertex2D(10, 10),
+                              Vertex2D(90, 50),
+                              Vertex2D(40, 90)));
+
+    raster(Triangle<Vertex2D>(Vertex2D(10, 10),
+                              Vertex2D(90, 50),
+                              Vertex2D(95, 5)));
+
+    raster(Triangle<Vertex2D>(Vertex2D(10, 10),
+                              Vertex2D(8, 92),
+                              Vertex2D(40, 90)));
+
+    raster(Triangle<Vertex2D>(Vertex2D(93, 93),
+                              Vertex2D(90, 50),
+                              Vertex2D(40, 90)));
+
+    stbi_write_png("strokelength.png",
+                   buffer->width,
+                   buffer->height,
+                   4,
+                   buffer->data,
+                   buffer->width * sizeof(unsigned int));
 }

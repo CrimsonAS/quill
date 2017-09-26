@@ -8,7 +8,7 @@ using namespace Quill;
 #include <QtCore>
 #include <QtGui>
 
-static int RUNNING_TIME = 5000;
+static int RUNNING_TIME = 1000;
 
 const int PEN_WIDTH = 10;
 
@@ -36,10 +36,10 @@ struct TriangleVsEdge
 
 void runQuillBenchmark_segments(int segments)
 {
-    Stroker<TriangleVsEdge<MonoRasterizer<SolidColorFiller, Triangle<Vertex2D>>, Triangle<Vertex2D>>> stroker;
-    stroker.rasterizer.rasterizer.fill.value = 0xffffffff;
+    Stroker<LerpRaster<SolidColorFiller>> stroker;
+    stroker.rasterizer.fill.value = 0xffffffff;
 
-    RasterBuffer *buffer = &stroker.rasterizer.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
     buffer->allocate(1000, 1000);
     buffer->fill(0xff000000);
 
@@ -88,10 +88,10 @@ void runQuillBenchmark_segments(int segments)
 
 void runQuillBenchmark_continuous(int segments)
 {
-    Stroker<TriangleVsEdge<MonoRasterizer<SolidColorFiller, Triangle<Vertex2D>>, Triangle<Vertex2D>>> stroker;
-    stroker.rasterizer.rasterizer.fill.value = 0xffffffff;
+    Stroker<LerpRaster<SolidColorFiller>> stroker;
+    stroker.rasterizer.fill.value = 0xffffffff;
 
-    RasterBuffer *buffer = &stroker.rasterizer.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
     buffer->allocate(1000, 1000);
     buffer->fill(0xff000000);
 
