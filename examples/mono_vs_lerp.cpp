@@ -43,8 +43,8 @@ double stroke_continuous(S *stroker, int width, int height, int segments)
 
     std::chrono::time_point<std::chrono::system_clock> timeEnd = std::chrono::system_clock::now();
 
-    double totalTime = (timeEnd - timeStart).count();
-    return counter * 1000 / totalTime;
+    double totalTime = std::chrono::duration<double>(timeEnd - timeStart).count();
+    return counter / (totalTime * 1000);
 }
 
 struct LerpFiller
