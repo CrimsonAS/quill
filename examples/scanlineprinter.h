@@ -25,13 +25,12 @@
 
 #pragma once
 
-struct DumpSpans
+template <typename VaryingType>
+struct ScanlinePrinter
 {
-    void operator()(Span span) {
-        std::cout << " - y=" << span.y
-                  << ", x=" << span.x
-                  << ", length=" << span.length
-                  << ", coverage=" << span.coverage
-                  << std::endl;
+    typedef VaryingType Varyings;
+
+    void operator()(BasicVertex<VaryingType> pos, int length, VaryingType dx) {
+        std::cout << pos << ", length=" << length << ", dx=" << dx << std::endl;
     }
 };
