@@ -13,4 +13,4 @@ SOURCES += main.cpp
 
 DEFINES += NDEBUG
 
-QMAKE_CXXFLAGS += -O3
+CONFIG += optimize_full

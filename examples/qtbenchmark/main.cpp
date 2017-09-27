@@ -3,10 +3,13 @@
 using namespace Quill;
 
 #include "rasterbuffer.h"
-#include "solidcolorfiller.h"
+#include "solidcolorfill.h"
 
 #include <QtCore>
 #include <QtGui>
+
+#define STB_PERLIN_IMPLEMENTATION
+#include "../stb_perlin.h"
 
 static int RUNNING_TIME = 1000;
 
@@ -36,7 +39,7 @@ struct TriangleVsEdge
 
 void runQuillBenchmark_segments(int segments)
 {
-    Stroker<LerpRaster<SolidColorFiller>> stroker;
+    Stroker<MonoRasterizer<SolidColorFill>> stroker;
     stroker.rasterizer.fill.value = 0xffffffff;
 
     RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
@@ -75,12 +78,12 @@ void runQuillBenchmark_segments(int segments)
 
         ++counter;
 
-        if (counter % 100 == 0)
+        if (counter % 25 == 0)
             if (timer.elapsed() > RUNNING_TIME)
                 break;
     }
 
-    printf("Quill - line segments, %d elements, %d iterations in %dms, %f ops / msec      \n",
+    printf("Quill - line segments, %5d elements, %4d iterations in %5dms, %7.3f ops / msec      \n",
            segments,
            counter,
            (int) timer.elapsed(),
@@ -93,7 +96,7 @@ void runQuillBenchmark_segments(int segments)
 
 void runQuillBenchmark_continuous(int segments)
 {
-    Stroker<LerpRaster<SolidColorFiller>> stroker;
+    Stroker<MonoRasterizer<SolidColorFill>> stroker;
     stroker.rasterizer.fill.value = 0xffffffff;
 
     RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
@@ -121,12 +124,12 @@ void runQuillBenchmark_continuous(int segments)
 
         ++counter;
 
-        if (counter % 100 == 0)
+        if (counter % 25 == 0)
             if (timer.elapsed() > RUNNING_TIME)
                 break;
     }
 
-    printf("Quill - continuous path, %d elements, %d iterations in %dms, %f ops / msec      \n",
+    printf("Quill - continuous path, %5d elements, %4d iterations in %5dms, %7.3f ops / msec      \n",
            segments,
            counter,
            (int) timer.elapsed(),
@@ -135,6 +138,74 @@ void runQuillBenchmark_continuous(int segments)
 
     QImage image((unsigned char *) buffer->data, buffer->width, buffer->height, QImage::Format_RGB32);
     image.save(QStringLiteral("quill_continuous_%1.png").arg(segments));
+}
+
+struct SimpleFill
+{
+    typedef VaryingUV Varyings;
+    RasterBuffer buffer;
+    void operator()(VertexUV pos, int length, VaryingUV dx) {
+        unsigned int *dst = buffer.scanline((int) pos.y) + (int) pos.x;
+        Varyings v = pos.v;
+        for (int i=0; i<length; ++i) {
+            float n = stb_perlin_noise3(v.u * 0.01f, v.v * 0.5f, 0.0f, 0, 0, 0);
+            if (n > 0)
+                dst[i] = 0xffffffff;
+            v = v + dx;
+        }
+    }
+};
+
+void runQuillBenchmark_segments_textured(int segments)
+{
+    Stroker<LerpRaster<SimpleFill>> stroker;
+
+    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    buffer->allocate(1000, 1000);
+    buffer->fill(0xff000000);
+
+    QElapsedTimer timer; timer.start();
+    int counter = 0;
+    while (true) {
+
+        float cx = buffer->width / 2;
+        float cy = buffer->height / 2;
+
+        QPointF first;
+        float width = 0;
+
+        for (int i=0; i<segments; ++i) {
+            float t = (i / float(segments - 1));
+            float x = sin(t * M_PI * 2 * 8) * t * cx * 0.8 + cx;
+            float y = cos(t * M_PI * 2 * 8) * t * cy * 0.8 + cy;
+
+            if ((i & 0x1) == 0) {
+                width = PEN_WIDTH + 2 * ((i >> 1) & 0x1);
+                first = QPointF(x, y);
+            } else {
+                stroker.width = width;
+                stroker.length = i;
+                stroker.moveTo(first.x(), first.y());
+                stroker.lineTo(x, y);
+            }
+        }
+
+        ++counter;
+
+        if (counter % 25 == 0)
+            if (timer.elapsed() > RUNNING_TIME)
+                break;
+    }
+
+    printf("Quill - textured line segments, %5d elements, %4d iterations in %5dms, %7.3f ops / msec      \n",
+           segments,
+           counter,
+           (int) timer.elapsed(),
+           counter / float(timer.elapsed())
+          );
+
+    QImage image((unsigned char *) buffer->data, buffer->width, buffer->height, QImage::Format_RGB32);
+    image.save(QStringLiteral("quill_segments_textured_%2.png").arg(segments));
 }
 
 
@@ -168,12 +239,12 @@ void runQtBenchmark_continuous(int segments)
 
         ++counter;
 
-        if (counter % 100 == 0)
+        if (counter % 25 == 0)
             if (timer.elapsed() > RUNNING_TIME)
                 break;
     }
 
-    printf("Qt - continuous path, %d elements, %d iterations in %dms, %f ops / msec      \n",
+    printf("Qt    - continuous path, %5d elements, %4d iterations in %5dms, %7.3f ops / msec      \n",
            segments,
            counter,
            (int) timer.elapsed(),
@@ -217,12 +288,12 @@ void runQtBenchmark_segments(int segments)
 
         ++counter;
 
-        if (counter % 100 == 0)
+        if (counter % 25 == 0)
             if (timer.elapsed() > RUNNING_TIME)
                 break;
     }
 
-    printf("Qt - line segments, %d elements, %d iterations in %dms, %f ops / msec      \n",
+    printf("Qt    - line segments, %5d elements, %4d iterations in %5dms, %7.3f ops / msec      \n",
            segments,
            counter,
            (int) timer.elapsed(),
@@ -281,17 +352,17 @@ void runQtBenchmark_segments_textured(int segments, bool antialiased = false)
 
         ++counter;
 
-        if (counter % 100 == 0)
+        if (counter % 10 == 0)
             if (timer.elapsed() > RUNNING_TIME)
                 break;
     }
 
-    printf("Qt - line textured segments, AA=%d, %d elements, %d iterations in %dms, %f ops / msec      \n",
-           antialiased,
+    printf("Qt    - textured line segments, %5d elements, %4d iterations in %5dms, %7.3f ops / msec (AA=%d)\n",
            segments,
            counter,
            (int) timer.elapsed(),
-           counter / float(timer.elapsed())
+           counter / float(timer.elapsed()),
+           antialiased
           );
 
     painter.end();
@@ -302,25 +373,29 @@ int main(int argc, char **argv)
 {
     QGuiApplication app(argc, argv);
 
-    // runQuillBenchmark_continuous(100);
-    // runQuillBenchmark_continuous(1000);
-    // runQuillBenchmark_continuous(10000);
+    runQuillBenchmark_continuous(100);
+    runQuillBenchmark_continuous(1000);
+    runQuillBenchmark_continuous(10000);
+    runQtBenchmark_continuous(100);
+    runQtBenchmark_continuous(1000);
+    runQtBenchmark_continuous(10000);
+    std::cout << std::endl;
+
 
     runQuillBenchmark_segments(100);
     runQuillBenchmark_segments(1000);
     runQuillBenchmark_segments(10000);
+    runQtBenchmark_segments(100);
+    runQtBenchmark_segments(1000);
+    runQtBenchmark_segments(10000);
+    std::cout << std::endl;
 
-    // runQtBenchmark_continuous(100);
-    // runQtBenchmark_continuous(1000);
-    // runQtBenchmark_continuous(10000);
-
-    // runQtBenchmark_segments(100);
-    // runQtBenchmark_segments(1000);
-    // runQtBenchmark_segments(10000);
-
-    // runQtBenchmark_segments_textured(100);
-    // runQtBenchmark_segments_textured(1000);
-    // runQtBenchmark_segments_textured(10000);
+    runQuillBenchmark_segments_textured(100);
+    runQuillBenchmark_segments_textured(1000);
+    runQuillBenchmark_segments_textured(10000);
+    runQtBenchmark_segments_textured(100);
+    runQtBenchmark_segments_textured(1000);
+    runQtBenchmark_segments_textured(10000);
 
     // runQtBenchmark_segments_textured(100, true);
     // runQtBenchmark_segments_textured(1000, true);
