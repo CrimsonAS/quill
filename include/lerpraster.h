@@ -29,10 +29,8 @@ template <typename FillFunction>
 struct LerpRaster
 {
     typedef typename FillFunction::Varyings Varyings;
-    typedef Quill::BasicVertex<Varyings> Vertex;
-    typedef Quill::Triangle<Vertex> Triangle;
 
-    void operator()(Triangle t);
+    void operator()(Triangle t, Varyings a, Varyings b, Varyings c);
 
     FillFunction fill;
 };

@@ -106,6 +106,7 @@ void runQuillBenchmark_continuous(int segments)
     QElapsedTimer timer; timer.start();
 
     int counter = 0;
+
     while (true) {
 
         float cx = buffer->width / 2;
@@ -144,11 +145,10 @@ struct SimpleFill
 {
     typedef VaryingUV Varyings;
     RasterBuffer buffer;
-    void operator()(VertexUV pos, int length, VaryingUV dx) {
+    void operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx) {
         unsigned int *dst = buffer.scanline((int) pos.y) + (int) pos.x;
-        Varyings v = pos.v;
         for (int i=0; i<length; ++i) {
-            float n = stb_perlin_noise3(v.u * 0.01f, v.v * 0.5f, 0.0f, 0, 0, 0);
+            float n = stb_perlin_noise3(v.u, v.v, 0.0f, 0, 0, 0);
             if (n > 0)
                 dst[i] = 0xffffffff;
             v = v + dx;
@@ -158,7 +158,7 @@ struct SimpleFill
 
 void runQuillBenchmark_segments_textured(int segments)
 {
-    Stroker<LerpRaster<SimpleFill>> stroker;
+    Stroker<LerpRaster<SimpleFill>, VaryingGeneratorLengthWidth> stroker;
 
     RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
     buffer->allocate(1000, 1000);

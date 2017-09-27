@@ -27,32 +27,10 @@
 
 
 
-template <typename Varyings>
-struct BasicVertex
+struct Vertex
 {
-    BasicVertex(float x = 0.0f, float y = 0.0f, Varyings v = Varyings()) : x(x), y(y), v(v) { }
+    Vertex(float x = 0.0f, float y = 0.0f);
+
     float x;
     float y;
-    Varyings v;
 };
-
-
-
-struct VaryingNoop
-{
-    VaryingNoop(float = 0.0f, float = 0.0f) {};
-};
-
-
-
-struct VaryingUV {
-    VaryingUV(float u = 0.0f, float v = 0.0f) : u(u), v(v) { }
-    float u;
-    float v;
-};
-
-
-
-typedef BasicVertex<VaryingNoop> Vertex;
-typedef BasicVertex<float> VertexU;
-typedef BasicVertex<VaryingUV> VertexUV;

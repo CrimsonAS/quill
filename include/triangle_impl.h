@@ -26,8 +26,8 @@
 #pragma once
 
 
-template <typename VertexType>
-Triangle<VertexType>::Triangle(VertexType a, VertexType b, VertexType c)
+
+inline Triangle::Triangle(Vertex a, Vertex b, Vertex c)
     : a(a)
     , b(b)
     , c(c)
@@ -36,8 +36,7 @@ Triangle<VertexType>::Triangle(VertexType a, VertexType b, VertexType c)
 
 
 
-template <typename VertexType>
-void Triangle<VertexType>::sort()
+inline void Triangle::sort()
 {
     if (b.y < a.y) {
         std::swap(a, b);
@@ -52,8 +51,7 @@ void Triangle<VertexType>::sort()
 
 
 
-template <typename VertexType>
-std::ostream &operator<<(std::ostream &o, Triangle<VertexType> t)
+inline std::ostream &operator<<(std::ostream &o, Triangle t)
 {
     o << "triangle(" << t.a << ", " << t.b << ", " << t.c << ")";
     return o;

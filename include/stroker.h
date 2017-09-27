@@ -25,7 +25,7 @@
 
 #pragma once
 
-template <typename Rasterizer>
+template <typename Rasterizer, typename VaryingGenerator = VaryingGeneratorNoop>
 struct Stroker
 {
     enum CapStyle {
@@ -45,6 +45,7 @@ struct Stroker
     float width         = 1.0f;
 
     Rasterizer rasterizer;
+    VaryingGenerator varying;
 
     int triangleCount   = 0;
     float length        = 0.0f;
@@ -62,8 +63,6 @@ struct Stroker
     // Internals
     //
 
-    typedef typename Rasterizer::Triangle Triangle;
-    typedef typename Rasterizer::Vertex Vertex;
     typedef typename Rasterizer::Varyings Varyings;
 
     enum SegmentType {

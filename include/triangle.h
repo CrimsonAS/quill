@@ -25,18 +25,16 @@
 
 #pragma once
 
-template <typename VertexType>
 struct Triangle
 {
-    VertexType a;
-    VertexType b;
-    VertexType c;
+    Vertex a;
+    Vertex b;
+    Vertex c;
 
-    Triangle(VertexType a, VertexType b, VertexType c);
+    Triangle(Vertex a, Vertex b, Vertex c);
 
     void sort();
 };
 
-template <typename VertexType>
-std::ostream &operator<<(std::ostream &o, Triangle<VertexType> t);
+std::ostream &operator<<(std::ostream &o, Triangle t);
 

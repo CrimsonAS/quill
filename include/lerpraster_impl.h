@@ -28,9 +28,21 @@
 
 
 template <typename FillFunction>
-void LerpRaster<FillFunction>::operator()(Triangle t)
+void LerpRaster<FillFunction>::operator()(Triangle t, Varyings va, Varyings vb, Varyings vc)
 {
-    t.sort();
+    // Sort the triangle and the varyings
+    if (t.b.y < t.a.y) {
+        std::swap(t.a, t.b);
+        std::swap(va, vb);
+    }
+    if (t.c.y < t.a.y) {
+        std::swap(t.a, t.c);
+        std::swap(va, vc);
+    }
+    if (t.c.y < t.b.y) {
+        std::swap(t.c, t.b);
+        std::swap(vc, vb);
+    }
 
     float y;
     float yaFloored = std::floor(t.a.y);
@@ -70,8 +82,7 @@ void LerpRaster<FillFunction>::operator()(Triangle t)
      *                 --C
      */
 
-
-    // std::cout << "rasterizing: " << t << std::endl;
+    // std::cout << "rasterizing: " << t << " " << va << vb << vc << std::endl;
     // std::cout << " - y=" << y << ", yaFloored=" << yaFloored << std::endl;
 
     if (y <= yb) {
@@ -80,8 +91,8 @@ void LerpRaster<FillFunction>::operator()(Triangle t)
 
         float dxl = (t.b.x - t.a.x) / dyab;
         float dxr = (t.c.x - t.a.x) / dyac;
-        Varyings dxld = (t.b.v - t.a.v) / dyab;
-        Varyings dxrd = (t.c.v - t.a.v) / dyac;
+        Varyings dxld = (vb - va) / dyab;
+        Varyings dxrd = (vc - va) / dyac;
 
         if (dxr < dxl) {
             std::swap(dxl, dxr);
@@ -94,22 +105,22 @@ void LerpRaster<FillFunction>::operator()(Triangle t)
         float acbx = t.a.x + dxr * height;
         float wb = acbx - bx;
 
-        Varyings varB = t.a.v + dxld * height;
-        Varyings varACB = t.a.v + dxrd * height;
+        Varyings varB = va + dxld * height;
+        Varyings varACB = va + dxrd * height;
         Varyings varDX = (varACB - varB) / wb;
 
         float yoffset = y - t.a.y;
         float left = t.a.x + dxl * yoffset;
         float right = t.a.x + dxr * yoffset;
-        Varyings varLeft = t.a.v + dxld * yoffset;
+        Varyings varLeft = va + dxld * yoffset;
 
         while (y <= yb) {
             float l = std::ceil(left - 0.5) + 0.5;
             float r = std::floor(right + 0.5) - 0.5;
 
             if (r >= l) {
-                Varyings data = varLeft + varDX * (l - left);
-                fill(Vertex(l, y, data), int(r - l) + 1, varDX);
+                Varyings var = varLeft + varDX * (l - left);
+                fill(Vertex(l, y), int(r - l) + 1, var, varDX);
             }
 
             left += + dxl;
@@ -125,8 +136,8 @@ void LerpRaster<FillFunction>::operator()(Triangle t)
 
         float dxl = (t.c.x - t.b.x) / dybc;
         float dxr = (t.c.x - t.a.x) / dyac;
-        Varyings dxld = (t.c.v - t.b.v) / dybc;
-        Varyings dxrd = (t.c.v - t.a.v) / dyac;
+        Varyings dxld = (vc - vb) / dybc;
+        Varyings dxrd = (vc - va) / dyac;
 
         if (dxl < dxr) {
             std::swap(dxl, dxr);
@@ -142,8 +153,8 @@ void LerpRaster<FillFunction>::operator()(Triangle t)
         //           << ", dybc=" << dybc << ", dxr=" << dxr << ", dxl=" << dxl << ", leftx=" << left << ", right=" << right
         //           << ", width=" << width << std::endl;
 
-        Varyings varLeft = t.c.v - dxld * height;
-        Varyings varRight = t.c.v - dxrd * height;
+        Varyings varLeft = vc - dxld * height;
+        Varyings varRight = vc - dxrd * height;
 
         Varyings varDX = (varRight - varLeft) / width;
 
@@ -154,8 +165,8 @@ void LerpRaster<FillFunction>::operator()(Triangle t)
             float r = std::floor(right + 0.5) - 0.5;
 
             if (r >= l) {
-                Varyings data = varLeft + varDX * (l - left);
-                fill(Vertex(l, y, data), int(r - l) + 1, varDX);
+                Varyings var = varLeft + varDX * (l - left);
+                fill(Vertex(l, y), int(r - l) + 1, var, varDX);
             }
 
             left += + dxl;

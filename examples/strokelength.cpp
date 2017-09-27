@@ -21,36 +21,38 @@ struct FbmFill
 {
     typedef VaryingUV Varyings;
     RasterBuffer buffer;
-    void operator()(VertexUV, int length, VaryingUV dx);
+    void operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx);
 };
 
 
-void FbmFill::operator()(VertexUV left, int length, VaryingUV dx)
+
+void FbmFill::operator()(Vertex pos, int length, Varyings v, VaryingUV dx)
 {
-    unsigned int *dst = buffer.scanline((int) left.y) + (int) left.x;
-    Varyings v = left.v;
+    unsigned int *dst = buffer.scanline((int) pos.y) + (int) pos.x;
     for (int i=0; i<length; ++i) {
-        float n = stb_perlin_fbm_noise3(v.u * 0.01, v.v * 0.5, 0, // x/y/z
+        float n = stb_perlin_fbm_noise3(v.u, v.v, 0, // x/y/z
                                         2.0,         // lacunarity
                                         0.5,         // gain
                                         6,           // octaves
                                         0, 0, 0);    // x/y/z wrap
-        float alpha = (20.0 - std::abs(v.v)) / 20.0f;
-        int x = (127 + (n * 128)) * alpha * alpha;
-        dst[i] = 0xff000000 | x | (x << 8) | (x << 16);
+        if (n > 0) {
+            int x = n * 255;
+            dst[i] = 0xff000000 | x | (x << 8) | (x << 16);
+        }
+
         v = v + dx;
     }
 }
 
+
+
 void doFbmStroke()
 {
-    Stroker<LerpRaster<FbmFill>> stroker;
+    Stroker<LerpRaster<FbmFill>, VaryingGeneratorLengthWidth> stroker;
 
     RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
     buffer->allocate(800, 800);
     buffer->fill(0xff000000);
-
-    stroker.width = 20;
 
     const int COUNT = 100;
 
@@ -63,7 +65,7 @@ void doFbmStroke()
         float x = 100 + t * 600;
         float y = 600 + 100 * cos(4 * t * M_PI) - t * 400;
 
-        // stroker.width = 10 + 10 * std::abs(cos(4 * t * M_PI));
+        stroker.width = 10 + 10 * std::abs(cos(4 * t * M_PI));
 
         if (i == 0) {
             stroker.moveTo(x, y);
@@ -91,11 +93,10 @@ struct SimpleFill
 {
     typedef VaryingUV Varyings;
     RasterBuffer buffer;
-    void operator()(VertexUV pos, int length, VaryingUV dx) {
+    void operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx) {
         unsigned int *dst = buffer.scanline((int) pos.y) + (int) pos.x;
-        Varyings v = pos.v;
         for (int i=0; i<length; ++i) {
-            float n = stb_perlin_noise3(v.u * 0.01f, v.v * 0.5f, 0.0f, 0, 0, 0);
+            float n = stb_perlin_noise3(v.u, v.v, 0.0f, 0, 0, 0);
             if (n >= 0)
                 dst[i] = 0xff000000;
             v = v + dx;
@@ -105,7 +106,7 @@ struct SimpleFill
 
 void doSimpleStroke()
 {
-    Stroker<LerpRaster<SimpleFill>> stroker;
+    Stroker<LerpRaster<SimpleFill>, VaryingGeneratorLengthWidth> stroker;
 
     RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
     buffer->allocate(800, 800);

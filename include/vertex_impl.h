@@ -26,164 +26,81 @@
 #pragma once
 
 
-template <typename Data> BasicVertex<Data> operator+(BasicVertex<Data> a, BasicVertex<Data> b)
+
+inline Vertex::Vertex(float x, float y)
+    : x(x)
+    , y(y)
 {
-    return BasicVertex<Data>(a.x + b.x, a.y + b.y, a.data + b.data);
 }
 
-template <typename Data> BasicVertex<Data> operator+(BasicVertex<Data> a, float x)
+
+
+inline Vertex operator+(Vertex a, Vertex b)
 {
-    return BasicVertex<Data>(a.x + x,   a.y + x,   a.data + x);
+    return Vertex(a.x + b.x, a.y + b.y);
 }
 
-template <typename Data> BasicVertex<Data> operator+(float x, BasicVertex<Data> a)
+
+
+inline Vertex operator+(Vertex a, float x)
 {
-    return BasicVertex<Data>(x + a.x,   x + a.y,   x + a.data);
+    return Vertex(a.x + x,   a.y + x);
 }
 
-template <typename Data> BasicVertex<Data> operator-(BasicVertex<Data> a, BasicVertex<Data> b)
+
+
+inline Vertex operator+(float x, Vertex a)
 {
-    return BasicVertex<Data>(a.x - b.x, a.y - b.y, a.data - b.data);
+    return Vertex(x + a.x,   x + a.y);
 }
 
-template <typename Data> BasicVertex<Data> operator-(BasicVertex<Data> a, float x)
+
+
+inline Vertex operator-(Vertex a, Vertex b)
 {
-    return BasicVertex<Data>(a.x - x,   a.y - x),  a.data - x;
+    return Vertex(a.x - b.x, a.y - b.y);
 }
 
-template <typename Data> BasicVertex<Data> operator-(float x, BasicVertex<Data> a)
+
+
+inline Vertex operator-(Vertex a, float x)
 {
-    return BasicVertex<Data>(x - a.x,   x - a.y),  x - a.data;
+    return Vertex(a.x - x,   a.y - x);
 }
 
-template <typename Data> BasicVertex<Data> operator*(BasicVertex<Data> a, float x)
+
+
+inline Vertex operator-(float x, Vertex a)
 {
-    return BasicVertex<Data>(a.x * x,   a.y * x,   a.data * x);
+    return Vertex(x - a.x,   x - a.y);
 }
 
-template <typename Data> BasicVertex<Data> operator*(float x, BasicVertex<Data> a)
+
+
+inline Vertex operator*(Vertex a, float x)
 {
-    return BasicVertex<Data>(x * a.x,   x * a.y,   x * a.data);
+    return Vertex(a.x * x,   a.y * x);
 }
 
-template <typename Data> BasicVertex<Data> operator/(BasicVertex<Data> a, float x)
+
+
+inline Vertex operator*(float x, Vertex a)
 {
-    return BasicVertex<Data>(a.x / x,   a.y / x ,  a.data / x);
+    return Vertex(x * a.x,   x * a.y);
 }
 
-template <typename Data>
-std::ostream &operator<<(std::ostream &o, BasicVertex<Data> v)
+
+
+inline Vertex operator/(Vertex a, float x)
 {
-    o << "[" << v.x << "," << v.y << "," << v.v << "]";
-    return o;
+    return Vertex(a.x / x,   a.y / x);
 }
 
-std::ostream &operator<<(std::ostream &o, BasicVertex<VaryingNoop> v)
+
+
+inline std::ostream &operator<<(std::ostream &o, Vertex v)
 {
     o << "[" << v.x << "," << v.y << "]";
     return o;
 }
 
-
-
-inline VaryingUV operator+(VaryingUV a, VaryingUV b)
-{
-    return VaryingUV(a.u + b.u, a.v + b.v);
-}
-
-inline VaryingUV operator+(VaryingUV a, float u)
-{
-    return VaryingUV(a.u + u,   a.v + u);
-}
-
-inline VaryingUV operator+(float u, VaryingUV a)
-{
-    return VaryingUV(u + a.u,   u + a.v);
-}
-
-inline VaryingUV operator-(VaryingUV a, VaryingUV b)
-{
-    return VaryingUV(a.u - b.u, a.v - b.v);
-}
-
-inline VaryingUV operator-(VaryingUV a, float u)
-{
-    return VaryingUV(a.u - u,   a.v - u);
-}
-
-inline VaryingUV operator-(float u, VaryingUV a)
-{
-    return VaryingUV(u - a.u,   u - a.v);
-}
-
-inline VaryingUV operator*(VaryingUV a, float u)
-{
-    return VaryingUV(a.u * u,   a.v * u);
-}
-
-inline VaryingUV operator*(float u, VaryingUV a)
-{
-    return VaryingUV(u * a.u,   u * a.v);
-}
-
-inline VaryingUV operator/(VaryingUV a, float u)
-{
-    return VaryingUV(a.u / u,   a.v / u);
-}
-
-std::ostream &operator<<(std::ostream &o, VaryingUV v)
-{
-    o << "[" << v.u << "," << v.v << "]"; return o;
-}
-
-
-
-inline VaryingNoop operator+(VaryingNoop, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-inline VaryingNoop operator+(VaryingNoop, float)
-{
-    return VaryingNoop();
-}
-
-inline VaryingNoop operator+(float, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-inline VaryingNoop operator-(VaryingNoop, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-inline VaryingNoop operator-(VaryingNoop, float)
-{
-    return VaryingNoop();
-}
-
-inline VaryingNoop operator-(float, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-inline VaryingNoop operator*(VaryingNoop, float)
-{
-    return VaryingNoop();
-}
-
-inline VaryingNoop operator*(float, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-inline VaryingNoop operator/(VaryingNoop, float)
-{
-    return VaryingNoop();
-}
-
-std::ostream &operator<<(std::ostream &o, VaryingNoop)
-{
-    return o;
-}

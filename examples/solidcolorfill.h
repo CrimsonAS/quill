@@ -32,11 +32,10 @@ struct SolidColorFill
     RasterBuffer buffer;
     unsigned int value = 0xff000000;
 
-    void operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop);
+    void operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop, Quill::VaryingNoop);
 };
 
-
-inline void SolidColorFill::operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop)
+inline void SolidColorFill::operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop, Quill::VaryingNoop)
 {
     assert(pos.y >= 0);
     assert(pos.y < int(buffer.height));

@@ -36,6 +36,8 @@ namespace Quill {
     #include "line.h"
     #include "vertex.h"
     #include "triangle.h"
+    #include "varying.h"
+    #include "varyinggenerator.h"
 
     #include "lerpraster.h"
     #include "monorasterizer.h"
@@ -46,6 +48,8 @@ namespace Quill {
     #include "line_impl.h"
     #include "vertex_impl.h"
     #include "triangle_impl.h"
+    #include "varying_impl.h"
+    #include "varyinggenerator_impl.h"
 
     #include "lerpraster_impl.h"
     #include "monorasterizer_impl.h"

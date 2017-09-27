@@ -26,7 +26,7 @@
 #pragma once
 
 template <typename SpansConsumer>
-void MonoRasterizer<SpansConsumer>::operator()(Triangle t)
+void MonoRasterizer<SpansConsumer>::operator()(Triangle t, Varyings, Varyings, Varyings)
 {
     t.sort();
 
@@ -93,7 +93,7 @@ void MonoRasterizer<SpanConsumer>::iterate(float &y, float ymax, float left, flo
          int len = r - l;
          assert(len >= 0);
          if (len > 0) {
-             fill(Vertex(l, y), len, VaryingNoop());
+             fill(Vertex(l, y), len, Varyings(), Varyings());
          }
          y += 1.0f;
          left += leftIncr;

@@ -15,22 +15,20 @@ struct Consumer
 
     RasterBuffer buffer;
 
-    void operator()(VertexUV, int length, VaryingUV dx);
+    void operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx);
 };
 
 
-void Consumer::operator()(VertexUV left, int length, VaryingUV dx)
+void Consumer::operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx)
 {
-    unsigned int *dst = buffer.scanline((int) left.y) + (int) left.x;
-
-    Varyings vd = left.v;
+    unsigned int *dst = buffer.scanline((int) pos.y) + (int) pos.x;
 
     for (int i=0; i<length; ++i) {
-        int r = int(255 * vd.u);
-        int b = int(255 * vd.v);
+        int r = int(255 * v.u);
+        int b = int(255 * v.v);
         dst[i] += 0xff000000 | (r) | (b << 16);
         dst[i] += 0x00003f00;
-        vd = vd + dx;
+        v = v + dx;
     }
 }
 
@@ -43,21 +41,10 @@ int main(int argc, char **argv)
     buffer->allocate(100, 100);
     buffer->fill(0xff000000);
 
-    raster(Triangle<VertexUV>(VertexUV(10, 10, VaryingUV(1, 1)),
-                              VertexUV(90, 50, VaryingUV(1, 0)),
-                              VertexUV(40, 90, VaryingUV(0, 1))));
-
-    raster(Triangle<VertexUV>(VertexUV(10, 10, VaryingUV(1, 1)),
-                              VertexUV(90, 50, VaryingUV(1, 0)),
-                              VertexUV(95,  5, VaryingUV(0, 0))));
-
-    raster(Triangle<VertexUV>(VertexUV(10, 10, VaryingUV(1, 1)),
-                              VertexUV( 8, 92, VaryingUV(0, 0)),
-                              VertexUV(40, 90, VaryingUV(0, 1))));
-
-    raster(Triangle<VertexUV>(VertexUV(93, 93, VaryingUV(0, 0)),
-                              VertexUV(90, 50, VaryingUV(1, 0)),
-                              VertexUV(40, 90, VaryingUV(0, 1))));
+    raster(Triangle(Vertex(10, 10), Vertex(90, 50), Vertex(40, 90)), VaryingUV(1, 1), VaryingUV(1, 0), VaryingUV(0, 1));
+    raster(Triangle(Vertex(10, 10), Vertex(90, 50), Vertex(95,  5)), VaryingUV(1, 1), VaryingUV(1, 0), VaryingUV(0, 0));
+    raster(Triangle(Vertex(10, 10), Vertex( 8, 92), Vertex(40, 90)), VaryingUV(1, 1), VaryingUV(0, 0), VaryingUV(0, 1));
+    raster(Triangle(Vertex(93, 93), Vertex(90, 50), Vertex(40, 90)), VaryingUV(0, 0), VaryingUV(1, 0), VaryingUV(0, 1));
 
     stbi_write_png("triangle.png",
                    buffer->width,

@@ -27,8 +27,8 @@
 
 
 
-template <typename Rasterizer>
-Stroker<Rasterizer>::Segment::Segment(SegmentType type, float x, float y, float width, JoinStyle joinStyle, CapStyle capStyle)
+template <typename Rasterizer, typename VaryingGenerator>
+Stroker<Rasterizer, VaryingGenerator>::Segment::Segment(SegmentType type, float x, float y, float width, JoinStyle joinStyle, CapStyle capStyle)
     : x(x)
     , y(y)
     , width(width)
@@ -40,24 +40,24 @@ Stroker<Rasterizer>::Segment::Segment(SegmentType type, float x, float y, float 
 
 
 
-template <typename Rasterizer>
-Stroker<Rasterizer>::Stroker()
+template <typename Rasterizer, typename VaryingGenerator>
+Stroker<Rasterizer, VaryingGenerator>::Stroker()
 {
     reset();
 }
 
 
 
-template <typename Rasterizer>
-void Stroker<Rasterizer>::store(float x, float y, SegmentType type)
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::store(float x, float y, SegmentType type)
 {
     m_lastSegment = Segment(type, x, y, width, joinStyle, capStyle);
 }
 
 
 
-template <typename Rasterizer>
-void Stroker<Rasterizer>::moveTo(float x, float y)
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::moveTo(float x, float y)
 {
     // std::cout << "moveTo(" << x << ", " << y << ")" << std::endl;
 
@@ -67,8 +67,8 @@ void Stroker<Rasterizer>::moveTo(float x, float y)
 
 
 
-template <typename Rasterizer>
-void Stroker<Rasterizer>::lineTo(float x, float y)
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
 {
     assert(m_lastSegment.type != InvalidType);
 
@@ -80,10 +80,14 @@ void Stroker<Rasterizer>::lineTo(float x, float y)
     float ndx = (line.y0 - line.y1) / len;
     float ndy = (line.x1 - line.x0) / len;
 
-    // std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << length << ", normal=" << ndx << "," << ndy << ", totalLength=" << m_length << std::endl;
 
     float w2 = width / 2;
     float cw2 = m_lastSegment.width / 2;
+
+    // std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << len
+    //           << ", width=" << w2 << "(" << cw2 << ")"
+    //           << ", normal=" << ndx << "," << ndy << ", totalLength=" << length
+    //           << std::endl;
 
     Line right(line.x0 + ndx * cw2,
                line.y0 + ndy * cw2,
@@ -113,8 +117,8 @@ void Stroker<Rasterizer>::lineTo(float x, float y)
 
 
 
-template <typename Rasterizer>
-void Stroker<Rasterizer>::join(Line lastLeft, Line lastRight, Line left, Line right, float len, float width)
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, Line left, Line right, float len, float width)
 {
     if (joinStyle == BevelJoin) {
         emit(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
@@ -125,8 +129,8 @@ void Stroker<Rasterizer>::join(Line lastLeft, Line lastRight, Line left, Line ri
 
 
 
-template <typename Rasterizer>
-void Stroker<Rasterizer>::close()
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::close()
 {
     if (m_lastSegment.type == LineToSegment) {
         assert(m_firstSegment.type == MoveToSegment);
@@ -144,15 +148,15 @@ void Stroker<Rasterizer>::close()
 
 
 
-template <typename Rasterizer>
-void Stroker<Rasterizer>::finish()
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::finish()
 {
 }
 
 
 
-template <typename Rasterizer>
-void Stroker<Rasterizer>::reset()
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::reset()
 {
     width = 1;
     joinStyle = BevelJoin;
@@ -163,15 +167,22 @@ void Stroker<Rasterizer>::reset()
     length = 0;
 }
 
-template <typename Rasterizer>
-void Stroker<Rasterizer>::emit(Line left, Line right, float newLength, float startWidth, float endWidth)
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::emit(Line left, Line right, float newLength, float startWidth, float endWidth)
 {
-    rasterizer(Triangle(Vertex(right.x0, right.y0, Varyings(length, startWidth)),
-                        Vertex(right.x1, right.y1, Varyings(newLength, endWidth)),
-                        Vertex(left.x0,  left.y0,  Varyings(length, -startWidth))));
-    rasterizer(Triangle(Vertex(left.x0,  left.y0,  Varyings(length, -startWidth)),
-                        Vertex(right.x1, right.y1, Varyings(newLength, endWidth)),
-                        Vertex(left.x1,  left.y1,  Varyings(newLength, -endWidth))));
+    rasterizer(Triangle(Vertex(right.x0, right.y0),
+                        Vertex(right.x1, right.y1),
+                        Vertex(left.x0,  left.y0)),
+               varying.r0(length, startWidth),
+               varying.r1(newLength, endWidth),
+               varying.l0(length, startWidth));
+
+    rasterizer(Triangle(Vertex(left.x0,  left.y0),
+                        Vertex(right.x1, right.y1),
+                        Vertex(left.x1,  left.y1)),
+               varying.l0(length, startWidth),
+               varying.r1(newLength, endWidth),
+               varying.l1(newLength, endWidth));
 
     triangleCount += 2;
 }
