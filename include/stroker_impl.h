@@ -76,11 +76,11 @@ void Stroker<Rasterizer>::lineTo(float x, float y)
         return;
 
     Line line(m_lastSegment.x, m_lastSegment.y, x, y);
-    float length = line.length();
-    float ndx = (line.y0 - line.y1) / length;
-    float ndy = (line.x1 - line.x0) / length;
+    float len = line.length();
+    float ndx = (line.y0 - line.y1) / len;
+    float ndy = (line.x1 - line.x0) / len;
 
-    // std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << length << ", normal=" << ndx << "," << ndy << std::endl;
+    // std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << length << ", normal=" << ndx << "," << ndy << ", totalLength=" << m_length << std::endl;
 
     float w2 = width / 2;
     float cw2 = m_lastSegment.width / 2;
@@ -95,10 +95,10 @@ void Stroker<Rasterizer>::lineTo(float x, float y)
               line.y1 - ndy * w2);
 
     if (m_lastSegment.type == LineToSegment) {
-        join(m_lastLeft, m_lastRight, left, right);
+        join(m_lastLeft, m_lastRight, left, right, length, cw2);
     }
 
-    emit(left, right);
+    emit(left, right, length + len, cw2, w2);
 
     if (m_lastSegment.type == MoveToSegment) {
         m_firstLeft = left;
@@ -108,17 +108,18 @@ void Stroker<Rasterizer>::lineTo(float x, float y)
     store(x, y, LineToSegment);
     m_lastLeft = left;
     m_lastRight = right;
-
+    length += len;
 }
 
 
 
 template <typename Rasterizer>
-void Stroker<Rasterizer>::join(Line lastLeft, Line lastRight, Line left, Line right)
+void Stroker<Rasterizer>::join(Line lastLeft, Line lastRight, Line left, Line right, float len, float width)
 {
     if (joinStyle == BevelJoin) {
         emit(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
-             Line(lastRight.x1, lastRight.y1, right.x0, right.y0));
+             Line(lastRight.x1, lastRight.y1, right.x0, right.y0),
+             len, width, width);
     }
 }
 
@@ -137,7 +138,7 @@ void Stroker<Rasterizer>::close()
         //           << " - firstLeft:  " << m_firstLeft << std::endl
         //           << " - firstRight: " << m_firstRight << std::endl;
 
-        join(m_lastLeft, m_lastRight, m_firstLeft, m_firstRight);
+        join(m_lastLeft, m_lastRight, m_firstLeft, m_firstRight, length, m_firstSegment.width);
     }
 }
 
@@ -159,17 +160,18 @@ void Stroker<Rasterizer>::reset()
     m_lastSegment = Segment();
     m_firstSegment = Segment();
     triangleCount = 0;
+    length = 0;
 }
 
 template <typename Rasterizer>
-void Stroker<Rasterizer>::emit(Line left, Line right)
+void Stroker<Rasterizer>::emit(Line left, Line right, float newLength, float startWidth, float endWidth)
 {
-    rasterizer(Triangle(Vertex(right.x0, right.y0),
-                        Vertex(right.x1, right.y1),
-                        Vertex(left.x0, left.y0)));
-    rasterizer(Triangle(Vertex(left.x0, left.y0),
-                        Vertex(right.x1, right.y1),
-                        Vertex(left.x1, left.y1)));
+    rasterizer(Triangle(Vertex(right.x0, right.y0, Varyings(length, startWidth)),
+                        Vertex(right.x1, right.y1, Varyings(newLength, endWidth)),
+                        Vertex(left.x0,  left.y0,  Varyings(length, -startWidth))));
+    rasterizer(Triangle(Vertex(left.x0,  left.y0,  Varyings(length, -startWidth)),
+                        Vertex(right.x1, right.y1, Varyings(newLength, endWidth)),
+                        Vertex(left.x1,  left.y1,  Varyings(newLength, -endWidth))));
 
     triangleCount += 2;
 }

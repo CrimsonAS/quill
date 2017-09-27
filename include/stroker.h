@@ -47,6 +47,7 @@ struct Stroker
     Rasterizer rasterizer;
 
     int triangleCount   = 0;
+    float length        = 0.0f;
 
     Stroker();
 
@@ -92,8 +93,8 @@ struct Stroker
 
     void store(float x, float y, SegmentType type);
 
-    void join(Line lastLeft, Line lastRight, Line left, Line right);
-    void emit(Line left, Line right);
+    void join(Line lastLeft, Line lastRight, Line left, Line right, float length, float width);
+    void emit(Line left, Line right, float length, float startWidth, float endWidth);
 
     Segment m_lastSegment;
     Line m_lastLeft;
