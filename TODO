@@ -1,0 +1,8 @@
+Todo:
+
+ - Renaming:
+   - MonoRasterizer and LerpRaster needs same naming scheme, suggest MonoRaster and LerpRaster
+   - Clipper is actually pseudo rasterizer right now, so it could be ClipRaster.
+   - Stroker::rasterizer would then also be called Stroker::raster for consistency
+
+ -
