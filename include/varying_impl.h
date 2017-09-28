@@ -90,7 +90,7 @@ inline VaryingUV operator/(VaryingUV a, float u)
 
 
 
-std::ostream &operator<<(std::ostream &o, VaryingUV v)
+inline std::ostream &operator<<(std::ostream &o, VaryingUV v)
 {
     o << "[" << v.u << "," << v.v << "]"; return o;
 }
@@ -160,7 +160,7 @@ inline VaryingNoop operator/(VaryingNoop, float)
 
 
 
-std::ostream &operator<<(std::ostream &o, VaryingNoop)
+inline std::ostream &operator<<(std::ostream &o, VaryingNoop)
 {
     return o;
 }

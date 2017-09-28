@@ -14,7 +14,7 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
-    Stroker<LerpRaster<SolidColorFill>> stroker;
+    Stroker<MonoRasterizer<SolidColorFill>> stroker;
 
     SolidColorFill *fill = &stroker.rasterizer.fill;
     fill->value = 0xffe0b0a0;
