@@ -152,7 +152,7 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
 
         // Don't really know how long steps we have to take, but lets assume a
         // bit more than 3 gives us good results.. Hey, lets just use PI.
-        int steps = std::ceil(arcLength / M_PI);
+        int steps = std::ceil(std::abs(arcLength / M_PI));
         if (steps > 30)
             steps = 30;
         assert(steps > 0);
