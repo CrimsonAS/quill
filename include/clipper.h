@@ -25,38 +25,17 @@
 
 #pragma once
 
-#include <iostream>
-#include <cassert>
-#include <cmath>
-#include <cstring>
+template <typename Raster>
+struct Clipper
+{
+    typedef typename Raster::Varyings Varyings;
 
-namespace Quill {
+    void operator()(Triangle t, Varyings a, Varyings b, Varyings c);
 
-    // Delcarations
-    #include "line.h"
-    #include "vertex.h"
-    #include "triangle.h"
-    #include "varying.h"
-    #include "varyinggenerator.h"
+    Raster raster;
 
-    #include "clipper.h"
-    #include "lerpraster.h"
-    #include "monorasterizer.h"
-
-    #include "stroker.h"
-
-    // Implementations
-    #include "line_impl.h"
-    #include "vertex_impl.h"
-    #include "triangle_impl.h"
-    #include "varying_impl.h"
-    #include "varyinggenerator_impl.h"
-
-    #include "clipper_impl.h"
-    #include "lerpraster_impl.h"
-    #include "monorasterizer_impl.h"
-
-    #include "stroker_impl.h"
-
-
+    float x0 = 0.0f;
+    float x1 = 0.0f;
+    float y0 = 0.0f;
+    float y1 = 0.0f;
 };

@@ -25,38 +25,17 @@
 
 #pragma once
 
-#include <iostream>
-#include <cassert>
-#include <cmath>
-#include <cstring>
+template <typename Raster>
+void Clipper<Raster>::operator()(Triangle t, Varyings a, Varyings b, Varyings c)
+{
+    if (t.a.x < x0 || t.b.x < x0 || t.c.x < x0
+        || t.a.x > x1 || t.b.x > x1 || t.c.x > x1
+        || t.a.y < y0 || t.b.y < y0 || t.c.y < y0
+        || t.a.y > y1 || t.b.y > y1 || t.c.y > y1) {
+        // ### Segment the triangle into chunks and call fill with
+        // the splitted triangles.
+        return;
+    }
 
-namespace Quill {
-
-    // Delcarations
-    #include "line.h"
-    #include "vertex.h"
-    #include "triangle.h"
-    #include "varying.h"
-    #include "varyinggenerator.h"
-
-    #include "clipper.h"
-    #include "lerpraster.h"
-    #include "monorasterizer.h"
-
-    #include "stroker.h"
-
-    // Implementations
-    #include "line_impl.h"
-    #include "vertex_impl.h"
-    #include "triangle_impl.h"
-    #include "varying_impl.h"
-    #include "varyinggenerator_impl.h"
-
-    #include "clipper_impl.h"
-    #include "lerpraster_impl.h"
-    #include "monorasterizer_impl.h"
-
-    #include "stroker_impl.h"
-
-
-};
+    raster(t, a, b, c);
+}

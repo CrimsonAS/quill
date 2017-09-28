@@ -121,6 +121,26 @@ void testMonoRaster(int segments)
            opsPerMSec);
 }
 
+void testClippedMonoRaster(int segments)
+{
+    Stroker<Clipper<MonoRasterizer<SolidColorFill>>> stroker;
+    stroker.rasterizer.raster.fill.value = 0xffffffff;
+    stroker.rasterizer.x0 = 0;
+    stroker.rasterizer.x1 = 1000;
+    stroker.rasterizer.y0 = 0;
+    stroker.rasterizer.y1 = 1000;
+
+    RasterBuffer *buffer = &stroker.rasterizer.raster.fill.buffer;
+    buffer->allocate(1000, 1000);
+    buffer->fill(0xff000000);
+
+    double opsPerMSec = stroke_continuous(&stroker, buffer->width, buffer->height, segments);
+
+    printf("ClippedMono - %6d segments, continuous path: %f ops / msec\n",
+           segments,
+           opsPerMSec);
+}
+
 int main(int argc, char **argv)
 {
     testLerpRaster(100);
@@ -130,6 +150,10 @@ int main(int argc, char **argv)
     testMonoRaster(100);
     testMonoRaster(1000);
     testMonoRaster(10000);
+
+    testClippedMonoRaster(100);
+    testClippedMonoRaster(1000);
+    testClippedMonoRaster(10000);
 
     testLerpRasterInterp(100);
     testLerpRasterInterp(1000);
