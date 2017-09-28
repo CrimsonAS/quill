@@ -1,5 +1,5 @@
 INCLUDES := -I../include
-CFLAGS   := --std=c++11 -O2
+CFLAGS   := --std=c++11 -O2 -Wall
 DEFINES  :=
 LIBS     :=
 CC		 := g++
@@ -23,13 +23,13 @@ mono_vs_lerp: mono_vs_lerp.cpp
 	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) -DNDEBUG mono_vs_lerp.cpp $(LIBS) -o mono_vs_lerp
 
 joinstyles: joinstyles.cpp
-	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) -DNDEBUG joinstyles.cpp $(LIBS) -o joinstyles
+	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) joinstyles.cpp $(LIBS) -o joinstyles
 
 
 
 clean:
-	rm hello
-	rm triangle
-	rm strokelength
-	rm mono_vs_lerp
-	rm joinstyles
+	@rm -f hello
+	@rm -f triangle
+	@rm -f strokelength
+	@rm -f mono_vs_lerp
+	@rm -f joinstyles

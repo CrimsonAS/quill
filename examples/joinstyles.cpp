@@ -45,12 +45,12 @@ int main(int argc, char *argv[])
     buffer->fill(0xff000000);
 
     stroker.joinStyle = RoundJoin;
-    stroker.width = 20;
+    stroker.width = 30;
     stroker.moveTo(50, 50);
     stroker.lineTo(150, 50);
     stroker.lineTo(150, 150);
-    // stroker.lineTo(100, 100);
-    // stroker.lineTo(100, 150);
+    stroker.lineTo(50, 120);
+    stroker.lineTo(100, 100);
 
     stbi_write_png("joinstyles.png",
                    buffer->width,

@@ -84,10 +84,10 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
     float w2 = width / 2;
     float cw2 = m_lastSegment.width / 2;
 
-    std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << len
-              << ", width=" << w2 << "(" << cw2 << ")"
-              << ", normal=" << ndx << "," << ndy << ", totalLength=" << length
-              << std::endl;
+    // std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << len
+    //           << ", width=" << w2 << "(" << cw2 << ")"
+    //           << ", normal=" << ndx << "," << ndy << ", totalLength=" << length
+    //           << std::endl;
 
     Line right(line.x0 + ndx * cw2,
                line.y0 + ndy * cw2,
@@ -128,21 +128,59 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
     } else if (joinStyle == RoundJoin) {
         float angleLast = std::atan2(lastLeft.y1 - m_lastSegment.y, lastLeft.x1 - m_lastSegment.x);
         float angleNext = std::atan2(left.y0 - m_lastSegment.y, left.x0 - m_lastSegment.x);
-        // if (angleNext < 0) {
-        //     std::cout << " -- adjusting next angle from: " << angleNext << std::endl;
-        //     angleNext += M_PI * 2;
-        // }
-        // if (angleLast < 0) {
-        //     std::cout << " -- adjusting last angle from: " << angleLast << std::endl;
-        //     angleLast += M_PI * 2;
-        // }
-
         float angleDelta = angleNext - angleLast;
-        std::cout << " - round join: angle: " << angleLast << "->" << angleNext << ", delta=" << angleDelta << std::endl;
-        std::cout << " -             origin: " << m_lastSegment.x << "," << m_lastSegment.y << std::endl;
-        std::cout << " -             from:   " << (lastLeft.x1 - m_lastSegment.x) << "," << (lastLeft.y1 - m_lastSegment.y) << std::endl;
-        std::cout << " -             to:     " << (left.x0 - m_lastSegment.x) << "," << (left.y0 - m_lastSegment.y) << std::endl;
+        if (angleDelta < -M_PI) {
+            angleDelta += M_PI * 2;
+        } else if (angleDelta > M_PI) {
+            angleDelta -= M_PI * 2;
+        }
+        assert(angleDelta <= M_PI && angleDelta >= -M_PI);
 
+        // Shortcut with a bevel join for 'tiny' angles.
+        // ### premature-optimization: Need to verify that this makes sense
+        // per-wise and that it at the same time doesn't cause too much of a visual
+        // impact..
+        if (std::abs(angleDelta) < M_PI / 10) {
+            stroke(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
+                   Line(lastRight.x1, lastRight.y1, right.x0, right.y0),
+                   len, width, width);
+            return;
+        }
+
+        float radius = width;
+        float arcLength = radius * angleDelta; // frin (2 * M_PI * radius) / (angleDelta / (2 * M_PI))
+
+        // Don't really know how long steps we have to take, but lets assume a
+        // bit more than 3 gives us good results.. Hey, lets just use PI.
+        int steps = std::ceil(arcLength / M_PI);
+        if (steps > 30)
+            steps = 30;
+        assert(steps > 0);
+
+        float llx = lastLeft.x1;
+        float lly = lastLeft.y1;
+        float lrx = lastRight.x1;
+        float lry = lastRight.y1;
+        float dt = angleDelta / steps;
+        float t = angleLast + dt;
+        for (int i=0; i<steps; ++i) {
+            float ct = radius * cos(t);
+            float st = radius * sin(t);
+            float lx = m_lastSegment.x + ct;
+            float ly = m_lastSegment.y + st;
+            float rx = m_lastSegment.x - ct;
+            float ry = m_lastSegment.y - st;
+
+            stroke(Line(llx, lly, lx, ly),
+                   Line(lrx, lry, rx, ry),
+                   len, width, width);
+
+            t += dt;
+            llx = lx;
+            lly = ly;
+            lrx = rx;
+            lry = ry;
+        }
 
     }
 }
