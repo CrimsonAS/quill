@@ -4,7 +4,9 @@ DEFINES  :=
 LIBS     :=
 CC		 := g++
 
-all: hello triangle strokelength mono_vs_lerp
+
+
+all: hello triangle strokelength mono_vs_lerp joinstyles
 
 
 
@@ -20,6 +22,9 @@ strokelength: strokelength.cpp
 mono_vs_lerp: mono_vs_lerp.cpp
 	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) -DNDEBUG mono_vs_lerp.cpp $(LIBS) -o mono_vs_lerp
 
+joinstyles: joinstyles.cpp
+	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) -DNDEBUG joinstyles.cpp $(LIBS) -o joinstyles
+
 
 
 clean:
@@ -27,3 +32,4 @@ clean:
 	rm triangle
 	rm strokelength
 	rm mono_vs_lerp
+	rm joinstyles

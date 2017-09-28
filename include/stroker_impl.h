@@ -84,10 +84,10 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
     float w2 = width / 2;
     float cw2 = m_lastSegment.width / 2;
 
-    // std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << len
-    //           << ", width=" << w2 << "(" << cw2 << ")"
-    //           << ", normal=" << ndx << "," << ndy << ", totalLength=" << length
-    //           << std::endl;
+    std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << len
+              << ", width=" << w2 << "(" << cw2 << ")"
+              << ", normal=" << ndx << "," << ndy << ", totalLength=" << length
+              << std::endl;
 
     Line right(line.x0 + ndx * cw2,
                line.y0 + ndy * cw2,
@@ -102,7 +102,7 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
         join(m_lastLeft, m_lastRight, left, right, length, cw2);
     }
 
-    emit(left, right, length + len, cw2, w2);
+    stroke(left, right, length + len, cw2, w2);
 
     if (m_lastSegment.type == MoveToSegment) {
         m_firstLeft = left;
@@ -121,9 +121,29 @@ template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, Line left, Line right, float len, float width)
 {
     if (joinStyle == BevelJoin) {
-        emit(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
-             Line(lastRight.x1, lastRight.y1, right.x0, right.y0),
-             len, width, width);
+        stroke(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
+               Line(lastRight.x1, lastRight.y1, right.x0, right.y0),
+               len, width, width);
+
+    } else if (joinStyle == RoundJoin) {
+        float angleLast = std::atan2(lastLeft.y1 - m_lastSegment.y, lastLeft.x1 - m_lastSegment.x);
+        float angleNext = std::atan2(left.y0 - m_lastSegment.y, left.x0 - m_lastSegment.x);
+        // if (angleNext < 0) {
+        //     std::cout << " -- adjusting next angle from: " << angleNext << std::endl;
+        //     angleNext += M_PI * 2;
+        // }
+        // if (angleLast < 0) {
+        //     std::cout << " -- adjusting last angle from: " << angleLast << std::endl;
+        //     angleLast += M_PI * 2;
+        // }
+
+        float angleDelta = angleNext - angleLast;
+        std::cout << " - round join: angle: " << angleLast << "->" << angleNext << ", delta=" << angleDelta << std::endl;
+        std::cout << " -             origin: " << m_lastSegment.x << "," << m_lastSegment.y << std::endl;
+        std::cout << " -             from:   " << (lastLeft.x1 - m_lastSegment.x) << "," << (lastLeft.y1 - m_lastSegment.y) << std::endl;
+        std::cout << " -             to:     " << (left.x0 - m_lastSegment.x) << "," << (left.y0 - m_lastSegment.y) << std::endl;
+
+
     }
 }
 
@@ -168,7 +188,7 @@ void Stroker<Rasterizer, VaryingGenerator>::reset()
 }
 
 template <typename Rasterizer, typename VaryingGenerator>
-void Stroker<Rasterizer, VaryingGenerator>::emit(Line left, Line right, float newLength, float startWidth, float endWidth)
+void Stroker<Rasterizer, VaryingGenerator>::stroke(Line left, Line right, float newLength, float startWidth, float endWidth)
 {
     rasterizer(Triangle(Vertex(right.x0, right.y0),
                         Vertex(right.x1, right.y1),
