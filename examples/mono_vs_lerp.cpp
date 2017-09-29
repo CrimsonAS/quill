@@ -141,8 +141,33 @@ void testClippedMonoRaster(int segments)
            opsPerMSec);
 }
 
+void testBarycentricRaster(int segments)
+{
+    Stroker<BarycentricRaster<SolidColorFill>> stroker;
+    stroker.rasterizer.fill.value = 0xffffffff;
+    stroker.rasterizer.x0 = 0;
+    stroker.rasterizer.x1 = 1000;
+    stroker.rasterizer.y0 = 0;
+    stroker.rasterizer.y1 = 1000;
+
+    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    buffer->allocate(1000, 1000);
+    buffer->fill(0xff000000);
+
+    double opsPerMSec = stroke_continuous(&stroker, buffer->width, buffer->height, segments);
+
+    printf("Barycentric - %6d segments, continuous path: %f ops / msec\n",
+           segments,
+           opsPerMSec);
+}
+
 int main(int argc, char **argv)
 {
+
+    testBarycentricRaster(100);
+    testBarycentricRaster(1000);
+    testBarycentricRaster(10000);
+
     testLerpRaster(100);
     testLerpRaster(1000);
     testLerpRaster(10000);

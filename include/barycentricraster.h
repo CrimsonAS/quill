@@ -25,39 +25,19 @@
 
 #pragma once
 
-struct SolidColorFill
+template <typename FillFunction>
+struct BarycentricRaster
 {
-    typedef Quill::VaryingNoop Varyings;
+    typedef typename FillFunction::Varyings Varyings;
 
-    RasterBuffer buffer;
-    unsigned int value = 0xff000000;
+    FillFunction fill;
+    int x0 = 0.0f;
+    int y0 = 0.0f;
+    int x1 = 1000.0f;
+    int y1 = 1000.0f;
 
-    void operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop, Quill::VaryingNoop);
-    void operator()(int x, int y, int length);
+    void operator()(Triangle t, Varyings a, Varyings b, Varyings c);
+
+    int orient2d(int ax, int ay, int bx, int by, int cx, int cy) const;
+
 };
-
-inline void SolidColorFill::operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop, Quill::VaryingNoop)
-{
-    assert(pos.y >= 0);
-    assert(pos.y < int(buffer.height));
-    assert(pos.x >= 0);
-    assert(pos.x + length < buffer.width);
-
-    unsigned int *sline = buffer.scanline((int) pos.y) + (int) pos.x;
-    for (unsigned int x=0; x<length; ++x) {
-        sline[x] = value;
-    }
-}
-
-inline void SolidColorFill::operator()(int x, int y, int length)
-{
-    assert(y >= 0);
-    assert(y < int(buffer.height));
-    assert(x >= 0);
-    assert(x + length < buffer.width);
-
-    unsigned int *sline = buffer.scanline(y) + x;
-    for (int i=0; i<length; ++i) {
-        sline[i] = value;
-    }
-}

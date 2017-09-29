@@ -42,6 +42,7 @@ namespace Quill {
     #include "clipper.h"
     #include "lerpraster.h"
     #include "monorasterizer.h"
+    #include "barycentricraster.h"
 
     #include "stroker.h"
 
@@ -55,6 +56,7 @@ namespace Quill {
     #include "clipper_impl.h"
     #include "lerpraster_impl.h"
     #include "monorasterizer_impl.h"
+    #include "barycentricraster_impl.h"
 
     #include "stroker_impl.h"
 
