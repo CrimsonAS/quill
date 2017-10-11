@@ -27,7 +27,7 @@
 #pragma once
 
 template <typename SpansConsumer>
-void MonoRasterizer<SpansConsumer>::operator()(Triangle t, Varyings, Varyings, Varyings)
+void MonoRaster<SpansConsumer>::operator()(Triangle t, Varyings, Varyings, Varyings)
 {
     t.sort();
 
@@ -86,7 +86,7 @@ void MonoRasterizer<SpansConsumer>::operator()(Triangle t, Varyings, Varyings, V
 }
 
 template <typename SpanConsumer>
-void MonoRasterizer<SpanConsumer>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
+void MonoRaster<SpanConsumer>::iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr)
 {
      while (y < ymax) {
          int l = (int) (left);

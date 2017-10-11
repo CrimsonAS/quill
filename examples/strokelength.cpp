@@ -76,7 +76,7 @@ void doFbmStroke()
 {
     Stroker<LerpRaster<FbmFill>, VaryingGeneratorLengthWidth> stroker;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.raster.fill.buffer;
     buffer->allocate(800, 800);
     buffer->fill(0xff000000);
 
@@ -134,7 +134,7 @@ void doSimpleStroke()
 {
     Stroker<LerpRaster<SimpleFill>, VaryingGeneratorLengthWidth> stroker;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.raster.fill.buffer;
     buffer->allocate(800, 800);
     buffer->fill(0xffffffff);
 

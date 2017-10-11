@@ -45,7 +45,7 @@ struct Stroker
     CapStyle capStyle   = FlatCap;
     float width         = 1.0f;
 
-    Rasterizer rasterizer;
+    Rasterizer raster;
     VaryingGenerator varying;
 
     int triangleCount   = 0;

@@ -65,10 +65,10 @@ struct TriangleVsEdge
 
 void runQuillBenchmark_segments(int segments)
 {
-    Stroker<MonoRasterizer<SolidColorFill>> stroker;
-    stroker.rasterizer.fill.value = 0xffffffff;
+    Stroker<MonoRaster<SolidColorFill>> stroker;
+    stroker.raster.fill.value = 0xffffffff;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.raster.fill.buffer;
     buffer->allocate(1000, 1000);
     buffer->fill(0xff000000);
 
@@ -122,10 +122,10 @@ void runQuillBenchmark_segments(int segments)
 
 void runQuillBenchmark_continuous(int segments)
 {
-    Stroker<MonoRasterizer<SolidColorFill>> stroker;
-    stroker.rasterizer.fill.value = 0xffffffff;
+    Stroker<MonoRaster<SolidColorFill>> stroker;
+    stroker.raster.fill.value = 0xffffffff;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.raster.fill.buffer;
     buffer->allocate(1000, 1000);
     buffer->fill(0xff000000);
 
@@ -186,7 +186,7 @@ void runQuillBenchmark_segments_textured(int segments)
 {
     Stroker<LerpRaster<SimpleFill>, VaryingGeneratorLengthWidth> stroker;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.raster.fill.buffer;
     buffer->allocate(1000, 1000);
     buffer->fill(0xff000000);
 

@@ -229,19 +229,19 @@ void Stroker<Rasterizer, VaryingGenerator>::reset()
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::stroke(Line left, Line right, float newLength, float startWidth, float endWidth)
 {
-    rasterizer(Triangle(Vertex(left.x0, left.y0),
-                        Vertex(left.x1, left.y1),
-                        Vertex(right.x0, right.y0)),
-               varying.l0(length, startWidth),
-               varying.l1(newLength, endWidth),
-               varying.r0(length, startWidth));
+    raster(Triangle(Vertex(left.x0, left.y0),
+                    Vertex(left.x1, left.y1),
+                    Vertex(right.x0, right.y0)),
+           varying.l0(length, startWidth),
+           varying.l1(newLength, endWidth),
+           varying.r0(length, startWidth));
 
-    rasterizer(Triangle(Vertex(right.x0, right.y0),
-                        Vertex(left.x1, left.y1),
-                        Vertex(right.x1, right.y1)),
-               varying.r0(length, startWidth),
-               varying.l1(newLength, endWidth),
-               varying.r1(newLength, endWidth));
+    raster(Triangle(Vertex(right.x0, right.y0),
+                    Vertex(left.x1, left.y1),
+                    Vertex(right.x1, right.y1)),
+           varying.r0(length, startWidth),
+           varying.l1(newLength, endWidth),
+           varying.r1(newLength, endWidth));
 
     triangleCount += 2;
 }

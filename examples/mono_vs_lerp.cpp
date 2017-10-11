@@ -102,9 +102,9 @@ inline void LerpFiller::operator()(Vertex pos, unsigned int length, VaryingUV v,
 void testLerpRasterInterp(int segments)
 {
     Stroker<LerpRaster<LerpFiller>, VaryingGeneratorLengthWidth> stroker;
-    stroker.rasterizer.fill.value = 0xffffffff;
+    stroker.raster.fill.value = 0xffffffff;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.raster.fill.buffer;
     buffer->allocate(1000, 1000);
     buffer->fill(0xff000000);
 
@@ -118,9 +118,9 @@ void testLerpRasterInterp(int segments)
 void testLerpRaster(int segments)
 {
     Stroker<LerpRaster<SolidColorFill>> stroker;
-    stroker.rasterizer.fill.value = 0xffffffff;
+    stroker.raster.fill.value = 0xffffffff;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.raster.fill.buffer;
     buffer->allocate(1000, 1000);
     buffer->fill(0xff000000);
 
@@ -133,10 +133,10 @@ void testLerpRaster(int segments)
 
 void testMonoRaster(int segments)
 {
-    Stroker<MonoRasterizer<SolidColorFill>> stroker;
-    stroker.rasterizer.fill.value = 0xffffffff;
+    Stroker<MonoRaster<SolidColorFill>> stroker;
+    stroker.raster.fill.value = 0xffffffff;
 
-    RasterBuffer *buffer = &stroker.rasterizer.fill.buffer;
+    RasterBuffer *buffer = &stroker.raster.fill.buffer;
     buffer->allocate(1000, 1000);
     buffer->fill(0xff000000);
 
@@ -149,14 +149,14 @@ void testMonoRaster(int segments)
 
 void testClippedMonoRaster(int segments)
 {
-    Stroker<Clipper<MonoRasterizer<SolidColorFill>>> stroker;
-    stroker.rasterizer.raster.fill.value = 0xffffffff;
-    stroker.rasterizer.x0 = 0;
-    stroker.rasterizer.x1 = 1000;
-    stroker.rasterizer.y0 = 0;
-    stroker.rasterizer.y1 = 1000;
+    Stroker<ClipRaster<MonoRaster<SolidColorFill>>> stroker;
+    stroker.raster.raster.fill.value = 0xffffffff;
+    stroker.raster.x0 = 0;
+    stroker.raster.x1 = 1000;
+    stroker.raster.y0 = 0;
+    stroker.raster.y1 = 1000;
 
-    RasterBuffer *buffer = &stroker.rasterizer.raster.fill.buffer;
+    RasterBuffer *buffer = &stroker.raster.raster.fill.buffer;
     buffer->allocate(1000, 1000);
     buffer->fill(0xff000000);
 

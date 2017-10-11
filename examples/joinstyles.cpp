@@ -36,9 +36,9 @@ using namespace Quill;
 
 int main(int argc, char *argv[])
 {
-    Stroker<MonoRasterizer<SolidColorFill>> stroker;
+    Stroker<MonoRaster<SolidColorFill>> stroker;
 
-    SolidColorFill *fill = &stroker.rasterizer.fill;
+    SolidColorFill *fill = &stroker.raster.fill;
     fill->value = 0xffe0b0a0;
 
     RasterBuffer *buffer = &fill->buffer;

@@ -26,17 +26,18 @@
 
 #pragma once
 
-template <typename Raster>
-struct Clipper
+template <typename FillFunction>
+struct MonoRaster
 {
-    typedef typename Raster::Varyings Varyings;
+    typedef typename FillFunction::Varyings Varyings;
 
     void operator()(Triangle t, Varyings a, Varyings b, Varyings c);
 
-    Raster raster;
+    FillFunction fill;
 
-    float x0 = 0.0f;
-    float x1 = 0.0f;
-    float y0 = 0.0f;
-    float y1 = 0.0f;
+    // ********************
+    // Internals
+    //
+
+    void iterate(float &y, float ymax, float left, float right, float leftIncr, float rightIncr);
 };

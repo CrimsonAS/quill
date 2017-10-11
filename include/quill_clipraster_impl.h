@@ -27,7 +27,7 @@
 #pragma once
 
 template <typename Raster>
-void Clipper<Raster>::operator()(Triangle t, Varyings a, Varyings b, Varyings c)
+void ClipRaster<Raster>::operator()(Triangle t, Varyings a, Varyings b, Varyings c)
 {
     if (t.a.x < x0 || t.b.x < x0 || t.c.x < x0
         || t.a.x > x1 || t.b.x > x1 || t.c.x > x1

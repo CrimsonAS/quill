@@ -44,12 +44,12 @@ public:
 
     void paintEvent(QPaintEvent *)
     {
-        Stroker<Clipper<MonoRasterizer<SolidColorFill>>> stroker;
+        Stroker<ClipRaster<MonoRaster<SolidColorFill>>> stroker;
 
-        stroker.rasterizer.x1 = width();
-        stroker.rasterizer.y1 = height();
+        stroker.raster.x1 = width();
+        stroker.raster.y1 = height();
 
-        SolidColorFill *fill = &stroker.rasterizer.raster.fill;
+        SolidColorFill *fill = &stroker.raster.raster.fill;
         fill->value = 0xffffffff;
 
         RasterBuffer *buffer = &fill->buffer;

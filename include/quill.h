@@ -33,30 +33,30 @@
 namespace Quill {
 
     // Delcarations
-    #include "line.h"
-    #include "vertex.h"
-    #include "triangle.h"
-    #include "varying.h"
-    #include "varyinggenerator.h"
+    #include "quill_line.h"
+    #include "quill_vertex.h"
+    #include "quill_triangle.h"
+    #include "quill_varying.h"
+    #include "quill_varyinggenerator.h"
 
-    #include "clipper.h"
-    #include "lerpraster.h"
-    #include "monorasterizer.h"
+    #include "quill_clipraster.h"
+    #include "quill_lerpraster.h"
+    #include "quill_monoraster.h"
 
-    #include "stroker.h"
+    #include "quill_stroker.h"
 
     // Implementations
-    #include "line_impl.h"
-    #include "vertex_impl.h"
-    #include "triangle_impl.h"
-    #include "varying_impl.h"
-    #include "varyinggenerator_impl.h"
+    #include "quill_line_impl.h"
+    #include "quill_vertex_impl.h"
+    #include "quill_triangle_impl.h"
+    #include "quill_varying_impl.h"
+    #include "quill_varyinggenerator_impl.h"
 
-    #include "clipper_impl.h"
-    #include "lerpraster_impl.h"
-    #include "monorasterizer_impl.h"
+    #include "quill_clipraster_impl.h"
+    #include "quill_lerpraster_impl.h"
+    #include "quill_monoraster_impl.h"
 
-    #include "stroker_impl.h"
+    #include "quill_stroker_impl.h"
 
 
 };
