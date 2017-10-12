@@ -78,4 +78,6 @@ int main(int argc, char **argv)
                    4,
                    buffer->data,
                    buffer->width * sizeof(unsigned int));
+
+    std::cout << "wrote 'triangle.png'..." << std::endl;
 }

@@ -113,6 +113,8 @@ void doFbmStroke()
                    4,
                    buffer->data,
                    buffer->width * sizeof(unsigned int));
+
+    cout << " - wrote 'strokelength_fbm.png'" << endl;
 }
 
 struct SimpleFill
@@ -171,6 +173,8 @@ void doSimpleStroke()
                    4,
                    buffer->data,
                    buffer->width * sizeof(unsigned int));
+
+    cout << " - wrote 'strokelength_simple.png'" << endl;
 }
 
 int main(int argc, char **argv)

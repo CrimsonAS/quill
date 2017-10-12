@@ -34,24 +34,42 @@
 
 using namespace Quill;
 
+template <typename S>
+void draw(float width, unsigned int color, S *stroker, float dx, float dy)
+{
+    stroker->width = width;
+    stroker->raster.fill.value = color;
+
+    stroker->moveTo(0 + dx, 0 + dy);
+    stroker->lineTo(100 + dx, 0 + dy);
+    stroker->lineTo(100 + dx, 100 + dy);
+    stroker->lineTo(00 + dx, 70 + dy);
+    stroker->lineTo(50 + dx, 50 + dy);
+    stroker->finish();
+}
+
 int main(int argc, char *argv[])
 {
     Stroker<MonoRaster<SolidColorFill>> stroker;
 
     SolidColorFill *fill = &stroker.raster.fill;
-    fill->value = 0xffe0b0a0;
 
     RasterBuffer *buffer = &fill->buffer;
-    buffer->allocate(200, 600);
+    buffer->allocate(500, 500);
     buffer->fill(0xff000000);
 
-    stroker.joinStyle = RoundJoin;
-    stroker.width = 30;
-    stroker.moveTo(50, 50);
-    stroker.lineTo(150, 50);
-    stroker.lineTo(150, 150);
-    stroker.lineTo(50, 120);
-    stroker.lineTo(100, 100);
+    float x = 50;
+    for (int cap=0; cap<3; ++cap) {
+        float y = 50;
+        for (int join=0; join<3; ++join) {
+            stroker.capStyle = CapStyle(cap);
+            stroker.joinStyle = JoinStyle(join);
+            draw(20, 0xffe0b0a0, &stroker, x, y);
+            draw( 1, 0xffffffff, &stroker, x, y);
+            y += 150;
+        }
+        x += 150;
+    }
 
     stbi_write_png("joinstyles.png",
                    buffer->width,
@@ -59,6 +77,8 @@ int main(int argc, char *argv[])
                    4,
                    buffer->data,
                    buffer->width * sizeof(unsigned int));
+
+    std::cout << "wrote 'joinstyles.png'..." << std::endl;
 
     return 0;
 

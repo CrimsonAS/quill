@@ -64,6 +64,7 @@ int main(int argc, char **argv)
                    buffer->data,
                    buffer->width * sizeof(unsigned int));
 
+    std::cout << "wrote 'hello.png'..." << std::endl;
 
     return 0;
 }
