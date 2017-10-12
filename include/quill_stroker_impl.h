@@ -65,8 +65,8 @@ void Stroker<Rasterizer, VaryingGenerator>::moveTo(float x, float y)
 {
     // std::cout << "moveTo(" << x << ", " << y << ")" << std::endl;
     if (m_lastSegment.type != InvalidType) {
-        cap(m_firstLeft, m_firstRight, m_firstSegment.x, m_firstSegment.y, m_firstSegment.length, false);
-        cap(m_lastLeft, m_lastRight, m_lastSegment.x, m_lastSegment.y, m_lastSegment.length, true);
+        cap(m_firstLeft, m_firstRight, m_firstSegment, false);
+        cap(m_lastLeft, m_lastRight, m_lastSegment, true);
     }
 
     store(x, y, MoveToSegment);
@@ -197,21 +197,21 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
 }
 
 template <typename Rasterizer, typename VaryingGenerator>
-void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, float x, float y, float length, bool endCap)
+void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment segment, bool endCap)
 {
 #ifdef QUILL_STROKER_NO_CAPS
     return;
 #endif
-    // std::cout << " - cap(" << x << "," << y << ", " << (endCap ? "end-cap" : "start-cap") << ", left=" << left << ", right=" << right << std::endl;
+    // std::cout << " - cap(" << x << "," << y << ", " << (endCap ? "end-cap" : "start-cap") << ", left=" << left << ", right=" << right << ", width=" << width << std::endl;
     if (capStyle == RoundCap) {
         if (!endCap) {
             Line tmp(left.x1, left.y1, left.x0, left.y0);
             left = Line(right.x1, right.y1, right.x0, right.y0);
             right = tmp;
         }
-        float angle = std::atan2(left.y1 - y, left.x1 - x);
+        float angle = std::atan2(left.y1 - segment.y, left.x1 - segment.x);
 
-        float radius = width / 2;
+        float radius = segment.width / 2;
         float arcLength = radius * M_PI; // half a circle..
         int steps = std::min(30, int(std::ceil(std::abs(arcLength / M_PI))));
         assert(steps > 0);
@@ -228,14 +228,14 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, float x, 
         steps = std::max(1, steps / 2);
 
         for (int i=0; i<steps; ++i) {
-            float nlx = radius * cos(lt) + x;
-            float nly = radius * sin(lt) + y;
-            float nrx = radius * cos(rt) + x;
-            float nry = radius * sin(rt) + y;
+            float nlx = radius * cos(lt) + segment.x;
+            float nly = radius * sin(lt) + segment.y;
+            float nrx = radius * cos(rt) + segment.x;
+            float nry = radius * sin(rt) + segment.y;
 
             stroke(Line(lx, ly, nlx, nly),
                    Line(rx, ry, nrx, nry),
-                   length, width, width);
+                   segment.length, segment.width, segment.width);
 
             lx = nlx;
             ly = nly;
@@ -276,8 +276,8 @@ void Stroker<Rasterizer, VaryingGenerator>::finish()
 {
     if (m_lastSegment.x != m_firstSegment.x
         || m_lastSegment.y != m_firstSegment.y) {
-        cap(m_firstLeft, m_firstRight, m_firstSegment.x, m_firstSegment.y, m_firstSegment.length, false);
-        cap(m_lastLeft, m_lastRight, m_lastSegment.x, m_lastSegment.y, m_lastSegment.length, true);
+        cap(m_firstLeft, m_firstRight, m_firstSegment, false);
+        cap(m_lastLeft, m_lastRight, m_lastSegment, true);
     }
 
     reset();
@@ -288,9 +288,8 @@ void Stroker<Rasterizer, VaryingGenerator>::finish()
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::reset()
 {
-    width = 1;
-    joinStyle = BevelJoin;
-    capStyle = FlatCap;
+    m_firstLeft = Line();
+    m_firstRight = Line();
     m_lastSegment = Segment();
     m_firstSegment = Segment();
     triangleCount = 0;

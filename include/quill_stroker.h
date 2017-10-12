@@ -95,7 +95,7 @@ struct Stroker
 
     void store(float x, float y, SegmentType type);
 
-    void cap(Line left, Line right, float cx, float cy, float length, bool endCap);
+    void cap(Line left, Line right, Segment s, bool endCap);
     void join(Line lastLeft, Line lastRight, Line left, Line right, float length, float width);
     void stroke(Line left, Line right, float length, float startWidth, float endWidth);
 

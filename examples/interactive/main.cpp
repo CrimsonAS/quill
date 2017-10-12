@@ -60,7 +60,8 @@ public:
         float cy = height() / 2.0f;
 
         stroker.width = 10;
-        stroker.joinStyle = RoundJoin;
+        stroker.joinStyle = BevelJoin;
+        stroker.capStyle = RoundCap;
 
         stroker.moveTo(cx, cy);
 
@@ -69,7 +70,9 @@ public:
         float x = r * cos(t) + cx;
         float y = r * sin(t) + cy;
         stroker.lineTo(x, y);
+        stroker.width = 20;
         stroker.lineTo(100, 100);
+        stroker.finish();
 
         QImage image((uchar *) buffer->data, buffer->width, buffer->height, QImage::Format_RGB32);
 
