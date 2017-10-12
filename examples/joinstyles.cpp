@@ -41,6 +41,8 @@ void draw(float width, unsigned int color, S *stroker, float dx, float dy)
     stroker->raster.fill.value = color;
 
     stroker->moveTo(0 + dx, 0 + dy);
+    stroker->lineTo(20 + dx, 0 + dy);
+    stroker->moveTo(50 + dx, 0 + dy);
     stroker->lineTo(100 + dx, 0 + dy);
     stroker->lineTo(100 + dx, 100 + dy);
     stroker->lineTo(00 + dx, 70 + dy);

@@ -76,6 +76,7 @@ struct Stroker
         float x;
         float y;
         float width;
+        float length;
 
         SegmentType type : 2;
         JoinStyle joinStyle : 2;
@@ -87,12 +88,14 @@ struct Stroker
                 float x = 0.0f,
                 float y = 0.0f,
                 float width = 1.0f,
+                float length = 0.0f,
                 JoinStyle joinStyle = BevelJoin,
                 CapStyle capStyle = FlatCap);
     };
 
     void store(float x, float y, SegmentType type);
 
+    void cap(Line left, Line right, float cx, float cy, float length, bool endCap);
     void join(Line lastLeft, Line lastRight, Line left, Line right, float length, float width);
     void stroke(Line left, Line right, float length, float startWidth, float endWidth);
 
