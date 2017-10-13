@@ -47,26 +47,26 @@ void LerpRaster<FillFunction>::operator()(Triangle t, Varyings va, Varyings vb, 
 
     float y;
     float yaFloored = std::floor(t.a.y);
-    if (t.a.y - yaFloored < 0.5) {
-        y = yaFloored + 0.5;
+    if (t.a.y - yaFloored < 0.5f) {
+        y = yaFloored + 0.5f;
     } else {
-        y = yaFloored + 1.5;
+        y = yaFloored + 1.5f;
     }
 
     float yb;
     float ybFloored = std::floor(t.b.y);
-    if (t.b.y - ybFloored < 0.5) {
-        yb = ybFloored - 0.5;
+    if (t.b.y - ybFloored < 0.5f) {
+        yb = ybFloored - 0.5f;
     } else {
-        yb = ybFloored + 0.5;
+        yb = ybFloored + 0.5f;
     }
 
     float yc;
     float ycFloored = std::floor(t.c.y);
-    if (t.c.y - ycFloored < 0.5) {
-        yc = ycFloored - 0.5;
+    if (t.c.y - ycFloored < 0.5f) {
+        yc = ycFloored - 0.5f;
     } else {
-        yc = ycFloored + 0.5;
+        yc = ycFloored + 0.5f;
     }
 
     /*
@@ -116,11 +116,11 @@ void LerpRaster<FillFunction>::operator()(Triangle t, Varyings va, Varyings vb, 
         Varyings varLeft = va + dxld * yoffset;
 
         while (y <= yb) {
-            float l = std::ceil(left - 0.5) + 0.5;
-            float r = std::floor(right + 0.5) - 0.5;
+            int l = int(left + 0.5f);
+            int r = int(right - 0.5f);
 
             if (r >= l) {
-                Varyings var = varLeft + varDX * (l - left);
+                Varyings var = varLeft + varDX * (l + 0.5f - left);
                 fill(int(l), int(y), int(r - l) + 1, var, varDX);
             }
 
@@ -162,11 +162,11 @@ void LerpRaster<FillFunction>::operator()(Triangle t, Varyings va, Varyings vb, 
         // std::cout << "          dxld=" << dxld << ", dxrd=" << dxrd << ", varLeft=" << varLeft << ", varRight=" << varRight << ", varDX=" << varDX << endl;
 
         while (y <= yc) {
-            float l = std::ceil(left - 0.5) + 0.5;
-            float r = std::floor(right + 0.5) - 0.5;
+            int l = int(left + 0.5f);
+            int r = int(right - 0.5f);
 
             if (r >= l) {
-                Varyings var = varLeft + varDX * (l - left);
+                Varyings var = varLeft + varDX * (l + 0.5f - left);
                 fill(int(l), int(y), int(r - l) + 1, var, varDX);
             }
 
