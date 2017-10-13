@@ -92,7 +92,6 @@ void MonoRaster<SpanConsumer>::iterate(float &y, float ymax, float left, float r
          int l = (int) (left);
          int r = (int) (right);
          int len = r - l;
-         assert(len >= 0);
          if (len > 0) {
              fill(l, int(y), len, Varyings(), Varyings());
          }
