@@ -47,14 +47,14 @@ struct FbmFill
 {
     typedef VaryingUV Varyings;
     RasterBuffer buffer;
-    void operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx);
+    void operator()(int x, int y, int length, VaryingUV v, VaryingUV dx);
 };
 
 
 
-void FbmFill::operator()(Vertex pos, int length, Varyings v, VaryingUV dx)
+void FbmFill::operator()(int x, int y, int length, Varyings v, VaryingUV dx)
 {
-    unsigned int *dst = buffer.scanline((int) pos.y) + (int) pos.x;
+    unsigned int *dst = buffer.scanline(y) + x;
     for (int i=0; i<length; ++i) {
         float n = stb_perlin_fbm_noise3(v.u, v.v, 0, // x/y/z
                                         2.0,         // lacunarity
@@ -121,8 +121,8 @@ struct SimpleFill
 {
     typedef VaryingUV Varyings;
     RasterBuffer buffer;
-    void operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx) {
-        unsigned int *dst = buffer.scanline((int) pos.y) + (int) pos.x;
+    void operator()(int x, int y, int length, VaryingUV v, VaryingUV dx) {
+        unsigned int *dst = buffer.scanline(y) + x;
         for (int i=0; i<length; ++i) {
             float n = stb_perlin_noise3(v.u, v.v, 0.0f, 0, 0, 0);
             if (n >= 0)

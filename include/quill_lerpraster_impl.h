@@ -121,7 +121,7 @@ void LerpRaster<FillFunction>::operator()(Triangle t, Varyings va, Varyings vb, 
 
             if (r >= l) {
                 Varyings var = varLeft + varDX * (l - left);
-                fill(Vertex(l, y), int(r - l) + 1, var, varDX);
+                fill(int(l), int(y), int(r - l) + 1, var, varDX);
             }
 
             left += + dxl;
@@ -167,7 +167,7 @@ void LerpRaster<FillFunction>::operator()(Triangle t, Varyings va, Varyings vb, 
 
             if (r >= l) {
                 Varyings var = varLeft + varDX * (l - left);
-                fill(Vertex(l, y), int(r - l) + 1, var, varDX);
+                fill(int(l), int(y), int(r - l) + 1, var, varDX);
             }
 
             left += + dxl;

@@ -41,13 +41,13 @@ struct Consumer
 
     RasterBuffer buffer;
 
-    void operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx);
+    void operator()(int x, int y, int length, VaryingUV v, VaryingUV dx);
 };
 
 
-void Consumer::operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx)
+void Consumer::operator()(int x, int y, int length, VaryingUV v, VaryingUV dx)
 {
-    unsigned int *dst = buffer.scanline((int) pos.y) + (int) pos.x;
+    unsigned int *dst = buffer.scanline(y) + x;
 
     for (int i=0; i<length; ++i) {
         int r = int(255 * v.u);

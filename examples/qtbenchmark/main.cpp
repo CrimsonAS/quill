@@ -41,28 +41,6 @@ static int RUNNING_TIME = 1000;
 
 const int PEN_WIDTH = 10;
 
-template <typename Rasterizer, typename TriangleType>
-struct TriangleVsEdge
-{
-    typedef TriangleType Triangle;
-
-    float x0 = 0.0f;
-    float x1 = 1000.0f;
-    float y0 = 0.0f;
-    float y1 = 1000.0f;
-
-    Rasterizer rasterizer;
-
-    void operator()(Triangle t) {
-        if (t.a.x < x0 || t.b.x < x0 || t.c.x < x0
-            || t.a.x > x1 || t.b.x > x1 || t.c.x > x1
-            || t.a.y < y0 || t.b.y < y0 || t.c.y < y0
-            || t.a.y > y1 || t.b.y > y1 || t.c.y > y1)
-            return;
-        rasterizer(t);
-    }
-};
-
 void runQuillBenchmark_segments(int segments)
 {
     Stroker<MonoRaster<SolidColorFill>> stroker;
@@ -171,8 +149,8 @@ struct SimpleFill
 {
     typedef VaryingUV Varyings;
     RasterBuffer buffer;
-    void operator()(Vertex pos, int length, VaryingUV v, VaryingUV dx) {
-        unsigned int *dst = buffer.scanline((int) pos.y) + (int) pos.x;
+    void operator()(int x, int y, int length, VaryingUV v, VaryingUV dx) {
+        unsigned int *dst = buffer.scanline(y) + x;
         for (int i=0; i<length; ++i) {
             float n = stb_perlin_noise3(v.u, v.v, 0.0f, 0, 0, 0);
             if (n > 0)

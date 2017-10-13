@@ -33,17 +33,17 @@ struct SolidColorFill
     RasterBuffer buffer;
     unsigned int value = 0xff000000;
 
-    void operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop, Quill::VaryingNoop);
+    void operator()(int x, int y, unsigned int length, Quill::VaryingNoop, Quill::VaryingNoop);
 };
 
-inline void SolidColorFill::operator()(Quill::Vertex pos, unsigned int length, Quill::VaryingNoop, Quill::VaryingNoop)
+inline void SolidColorFill::operator()(int x, int y, unsigned int length, Quill::VaryingNoop, Quill::VaryingNoop)
 {
-    assert(pos.y >= 0);
-    assert(pos.y < int(buffer.height));
-    assert(pos.x >= 0);
-    assert(pos.x + length < buffer.width);
+    assert(y >= 0);
+    assert(y < int(buffer.height));
+    assert(x >= 0);
+    assert(x + length < buffer.width);
 
-    unsigned int *sline = buffer.scanline((int) pos.y) + (int) pos.x;
+    unsigned int *sline = buffer.scanline(y) + x;
     for (unsigned int x=0; x<length; ++x) {
         sline[x] = value;
     }

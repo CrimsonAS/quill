@@ -80,17 +80,17 @@ struct LerpFiller
     RasterBuffer buffer;
     unsigned int value = 0xff000000;
 
-    void operator()(Vertex pos, unsigned int length, VaryingUV v, VaryingUV dx);
+    void operator()(int x, int y, unsigned int length, VaryingUV v, VaryingUV dx);
 };
 
-inline void LerpFiller::operator()(Vertex pos, unsigned int length, VaryingUV v, VaryingUV dx)
+inline void LerpFiller::operator()(int x, int y, unsigned int length, VaryingUV v, VaryingUV dx)
 {
-    assert(pos.y >= 0);
-    assert(pos.y < int(buffer.height));
-    assert(pos.x >= 0);
-    assert(pos.x + length < buffer.width);
+    assert(y >= 0);
+    assert(y < int(buffer.height));
+    assert(x >= 0);
+    assert(x + length < buffer.width);
 
-    unsigned int *sline = buffer.scanline((int) pos.y) + (int) pos.x;
+    unsigned int *sline = buffer.scanline(y) + x;
     for (unsigned int x=0; x<length; ++x) {
         sline[x] = value + v.u + v.v;
         v = v + dx;
