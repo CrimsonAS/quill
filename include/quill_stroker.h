@@ -52,6 +52,7 @@ struct Stroker
     float length        = 0.0f;
 
     Stroker();
+    ~Stroker();
 
     void moveTo(float x, float y);
     void lineTo(float x, float y);
