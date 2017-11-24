@@ -210,7 +210,12 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment s
 #ifdef QUILL_STROKER_NO_CAPS
     return;
 #endif
-    // std::cout << " - cap(" << x << "," << y << ", " << (endCap ? "end-cap" : "start-cap") << ", left=" << left << ", right=" << right << ", width=" << width << std::endl;
+    // std::cout << " - cap(" << segment.x << "," << segment.y << ", " << (endCap ? "end-cap" : "start-cap")
+    //           << ", left=" << left << ", right=" << right << ", width=" << segment.width << std::endl;
+
+    if (segment.width <= 0.0f)
+        return;
+
     if (capStyle == RoundCap) {
         if (!endCap) {
             Line tmp(left.x1, left.y1, left.x0, left.y0);
