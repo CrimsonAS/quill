@@ -75,15 +75,15 @@ double stroke_continuous(S *stroker, int width, int height, int segments)
 
 struct LerpFiller
 {
-    typedef Quill::VaryingUV Varyings;
+    typedef Quill::Varying2D Varyings;
 
     RasterBuffer buffer;
     unsigned int value = 0xff000000;
 
-    void operator()(int x, int y, unsigned int length, VaryingUV v, VaryingUV dx);
+    void operator()(int x, int y, unsigned int length, Varying2D v, Varying2D dx);
 };
 
-inline void LerpFiller::operator()(int x, int y, unsigned int length, VaryingUV v, VaryingUV dx)
+inline void LerpFiller::operator()(int x, int y, unsigned int length, Varying2D v, Varying2D dx)
 {
     assert(y >= 0);
     assert(y < int(buffer.height));
@@ -92,7 +92,7 @@ inline void LerpFiller::operator()(int x, int y, unsigned int length, VaryingUV 
 
     unsigned int *sline = buffer.scanline(y) + x;
     for (unsigned int x=0; x<length; ++x) {
-        sline[x] = value + v.u + v.v;
+        sline[x] = value + v.x + v.y;
         v = v + dx;
     }
 }

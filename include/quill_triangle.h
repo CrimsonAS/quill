@@ -32,6 +32,7 @@ struct Triangle
     Vertex b;
     Vertex c;
 
+    Triangle(float x0, float y0, float x1, float y1, float x2, float y2);
     Triangle(Vertex a, Vertex b, Vertex c);
 
     void sort();

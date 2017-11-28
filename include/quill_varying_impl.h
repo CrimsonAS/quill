@@ -27,139 +27,66 @@
 #pragma once
 
 
+inline Varying2D operator+(Varying2D a, Varying2D b) { return Varying2D(a.x + b.x, a.y + b.y); }
+inline Varying2D operator+(Varying2D a, float u)     { return Varying2D(a.x + u,   a.y + u);   }
+inline Varying2D operator+(float u, Varying2D a)     { return Varying2D(u + a.x,   u + a.y);   }
+inline Varying2D operator-(Varying2D a, Varying2D b) { return Varying2D(a.x - b.x, a.y - b.y); }
+inline Varying2D operator-(Varying2D a, float u)     { return Varying2D(a.x - u,   a.y - u);   }
+inline Varying2D operator-(float u, Varying2D a)     { return Varying2D(u - a.x,   u - a.y);   }
+inline Varying2D operator*(Varying2D a, float u)     { return Varying2D(a.x * u,   a.y * u);   }
+inline Varying2D operator*(float u, Varying2D a)     { return Varying2D(u * a.x,   u * a.y);   }
+inline Varying2D operator/(Varying2D a, float u)     { return Varying2D(a.x / u,   a.y / u);   }
 
-inline VaryingUV operator+(VaryingUV a, VaryingUV b)
+inline std::ostream &operator<<(std::ostream &o, Varying2D v)
 {
-    return VaryingUV(a.u + b.u, a.v + b.v);
+    o << "[" << v.x << "," << v.y << "]"; return o;
 }
 
 
 
-inline VaryingUV operator+(VaryingUV a, float u)
+inline Varying3D operator+(Varying3D a, Varying3D b) { return Varying3D(a.x + b.x, a.y + b.y, a.z + b.z); }
+inline Varying3D operator+(Varying3D a, float u)     { return Varying3D(a.x + u,   a.y + u,   a.z + u);   }
+inline Varying3D operator+(float u, Varying3D a)     { return Varying3D(u + a.x,   u + a.y,   u + a.z);   }
+inline Varying3D operator-(Varying3D a, Varying3D b) { return Varying3D(a.x - b.x, a.y - b.y, a.z - b.z); }
+inline Varying3D operator-(Varying3D a, float u)     { return Varying3D(a.x - u,   a.y - u,   a.z - u);   }
+inline Varying3D operator-(float u, Varying3D a)     { return Varying3D(u - a.x,   u - a.y,   u - a.z);   }
+inline Varying3D operator*(Varying3D a, float u)     { return Varying3D(a.x * u,   a.y * u,   a.z * u);   }
+inline Varying3D operator*(float u, Varying3D a)     { return Varying3D(u * a.x,   u * a.y,   u * a.z);   }
+inline Varying3D operator/(Varying3D a, float u)     { return Varying3D(a.x / u,   a.y / u,   a.z / u);   }
+
+inline std::ostream &operator<<(std::ostream &o, Varying3D v)
 {
-    return VaryingUV(a.u + u,   a.v + u);
+    o << "[" << v.x << "," << v.y << "," << v.z << "]"; return o;
 }
 
 
 
-inline VaryingUV operator+(float u, VaryingUV a)
+inline Varying4D operator+(Varying4D a, Varying4D b) { return Varying4D(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w); }
+inline Varying4D operator+(Varying4D a, float u)     { return Varying4D(a.x + u,   a.y + u,   a.z + u,   a.w + u);   }
+inline Varying4D operator+(float u, Varying4D a)     { return Varying4D(u + a.x,   u + a.y,   u + a.z,   u + a.w);   }
+inline Varying4D operator-(Varying4D a, Varying4D b) { return Varying4D(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w); }
+inline Varying4D operator-(Varying4D a, float u)     { return Varying4D(a.x - u,   a.y - u,   a.z - u,   a.w - u);   }
+inline Varying4D operator-(float u, Varying4D a)     { return Varying4D(u - a.x,   u - a.y,   u - a.z,   u - a.w);   }
+inline Varying4D operator*(Varying4D a, float u)     { return Varying4D(a.x * u,   a.y * u,   a.z * u,   a.w * u);   }
+inline Varying4D operator*(float u, Varying4D a)     { return Varying4D(u * a.x,   u * a.y,   u * a.z,   u * a.w);   }
+inline Varying4D operator/(Varying4D a, float u)     { return Varying4D(a.x / u,   a.y / u,   a.z / u,   a.w / u);   }
+
+inline std::ostream &operator<<(std::ostream &o, Varying4D v)
 {
-    return VaryingUV(u + a.u,   u + a.v);
+    o << "[" << v.x << "," << v.y << "," << v.z << "," << v.w << "]"; return o;
 }
 
 
 
-inline VaryingUV operator-(VaryingUV a, VaryingUV b)
-{
-    return VaryingUV(a.u - b.u, a.v - b.v);
-}
-
-
-
-inline VaryingUV operator-(VaryingUV a, float u)
-{
-    return VaryingUV(a.u - u,   a.v - u);
-}
-
-
-
-inline VaryingUV operator-(float u, VaryingUV a)
-{
-    return VaryingUV(u - a.u,   u - a.v);
-}
-
-
-
-inline VaryingUV operator*(VaryingUV a, float u)
-{
-    return VaryingUV(a.u * u,   a.v * u);
-}
-
-
-
-inline VaryingUV operator*(float u, VaryingUV a)
-{
-    return VaryingUV(u * a.u,   u * a.v);
-}
-
-
-
-inline VaryingUV operator/(VaryingUV a, float u)
-{
-    return VaryingUV(a.u / u,   a.v / u);
-}
-
-
-
-inline std::ostream &operator<<(std::ostream &o, VaryingUV v)
-{
-    o << "[" << v.u << "," << v.v << "]"; return o;
-}
-
-
-
-inline VaryingNoop operator+(VaryingNoop, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-
-
-inline VaryingNoop operator+(VaryingNoop, float)
-{
-    return VaryingNoop();
-}
-
-
-
-inline VaryingNoop operator+(float, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-
-
-inline VaryingNoop operator-(VaryingNoop, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-
-
-inline VaryingNoop operator-(VaryingNoop, float)
-{
-    return VaryingNoop();
-}
-
-
-
-inline VaryingNoop operator-(float, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-
-
-inline VaryingNoop operator*(VaryingNoop, float)
-{
-    return VaryingNoop();
-}
-
-
-
-inline VaryingNoop operator*(float, VaryingNoop)
-{
-    return VaryingNoop();
-}
-
-
-
-inline VaryingNoop operator/(VaryingNoop, float)
-{
-    return VaryingNoop();
-}
-
-
+inline VaryingNoop operator+(VaryingNoop, VaryingNoop) { return VaryingNoop(); }
+inline VaryingNoop operator+(VaryingNoop, float) { return VaryingNoop(); }
+inline VaryingNoop operator+(float, VaryingNoop) { return VaryingNoop(); }
+inline VaryingNoop operator-(VaryingNoop, VaryingNoop) { return VaryingNoop(); }
+inline VaryingNoop operator-(VaryingNoop, float) { return VaryingNoop(); }
+inline VaryingNoop operator-(float, VaryingNoop) { return VaryingNoop(); }
+inline VaryingNoop operator*(VaryingNoop, float) { return VaryingNoop(); }
+inline VaryingNoop operator*(float, VaryingNoop) { return VaryingNoop(); }
+inline VaryingNoop operator/(VaryingNoop, float) { return VaryingNoop(); }
 
 inline std::ostream &operator<<(std::ostream &o, VaryingNoop)
 {

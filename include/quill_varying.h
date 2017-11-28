@@ -33,9 +33,24 @@ struct VaryingNoop
 
 
 
-struct VaryingUV {
-    VaryingUV(float u = 0.0f, float v = 0.0f) : u(u), v(v) { }
-    float u;
-    float v;
+struct Varying2D {
+    Varying2D(float x = 0.0f, float y = 0.0f) : x(x), y(y) { }
+    float x;
+    float y;
+};
+
+struct Varying3D {
+    Varying3D(float x = 0.0f, float y = 0.0f, float z = 0.0f) : x(x), y(y), z(z) { }
+    float x;
+    float y;
+    float z;
+};
+
+struct Varying4D {
+    Varying4D(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) : x(x), y(y), z(z), w(w) { }
+    float x;
+    float y;
+    float z;
+    float w;
 };
 
