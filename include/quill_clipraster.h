@@ -33,6 +33,13 @@ struct ClipRaster
 
     void operator()(Triangle t, Varyings a, Varyings b, Varyings c);
 
+    void clipLeft(Triangle t, Varyings a, Varyings b, Varyings c);
+    void clipRight(Triangle t, Varyings a, Varyings b, Varyings c);
+    void clipTop(Triangle t, Varyings a, Varyings b, Varyings c);
+    void clipBottom(Triangle t, Varyings a, Varyings b, Varyings c);
+
+    void ySort(Triangle &t, Varyings &a, Varyings &b, Varyings &c);
+
     Raster raster;
 
     float x0 = 0.0f;
