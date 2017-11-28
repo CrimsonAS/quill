@@ -37,21 +37,21 @@ using namespace std;
 
 struct Consumer
 {
-    typedef VaryingUV Varyings;
+    typedef Varying2D Varyings;
 
     RasterBuffer buffer;
 
-    void operator()(int x, int y, int length, VaryingUV v, VaryingUV dx);
+    void operator()(int x, int y, int length, Varying2D v, Varying2D dx);
 };
 
 
-void Consumer::operator()(int x, int y, int length, VaryingUV v, VaryingUV dx)
+void Consumer::operator()(int x, int y, int length, Varying2D v, Varying2D dx)
 {
     unsigned int *dst = buffer.scanline(y) + x;
 
     for (int i=0; i<length; ++i) {
-        int r = int(255 * v.u);
-        int b = int(255 * v.v);
+        int r = int(255 * v.x);
+        int b = int(255 * v.y);
         dst[i] += 0xff000000 | (r) | (b << 16);
         dst[i] += 0x00003f00;
         v = v + dx;
@@ -67,10 +67,10 @@ int main(int argc, char **argv)
     buffer->allocate(100, 100);
     buffer->fill(0xff000000);
 
-    raster(Triangle(Vertex(10, 10), Vertex(90, 50), Vertex(40, 90)), VaryingUV(1, 1), VaryingUV(1, 0), VaryingUV(0, 1));
-    raster(Triangle(Vertex(10, 10), Vertex(90, 50), Vertex(95,  5)), VaryingUV(1, 1), VaryingUV(1, 0), VaryingUV(0, 0));
-    raster(Triangle(Vertex(10, 10), Vertex( 8, 92), Vertex(40, 90)), VaryingUV(1, 1), VaryingUV(0, 0), VaryingUV(0, 1));
-    raster(Triangle(Vertex(93, 93), Vertex(90, 50), Vertex(40, 90)), VaryingUV(0, 0), VaryingUV(1, 0), VaryingUV(0, 1));
+    raster(Triangle(Vertex(10, 10), Vertex(90, 50), Vertex(40, 90)), Varying2D(1, 1), Varying2D(1, 0), Varying2D(0, 1));
+    raster(Triangle(Vertex(10, 10), Vertex(90, 50), Vertex(95,  5)), Varying2D(1, 1), Varying2D(1, 0), Varying2D(0, 0));
+    raster(Triangle(Vertex(10, 10), Vertex( 8, 92), Vertex(40, 90)), Varying2D(1, 1), Varying2D(0, 0), Varying2D(0, 1));
+    raster(Triangle(Vertex(93, 93), Vertex(90, 50), Vertex(40, 90)), Varying2D(0, 0), Varying2D(1, 0), Varying2D(0, 1));
 
     stbi_write_png("triangle.png",
                    buffer->width,

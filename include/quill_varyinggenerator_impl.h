@@ -56,30 +56,30 @@ inline VaryingNoop VaryingGeneratorNoop::l1(float, float)
 
 
 
-inline VaryingUV VaryingGeneratorLengthWidth::r0(float strokeLength, float strokeWidth)
+inline Varying2D VaryingGeneratorLengthWidth::r0(float strokeLength, float strokeWidth)
 {
-    return VaryingUV(strokeLength * lengthFactor, strokeWidth * widthFactor);
+    return Varying2D(strokeLength * lengthFactor, strokeWidth * widthFactor);
 }
 
 
 
-inline VaryingUV VaryingGeneratorLengthWidth::r1(float strokeLength, float strokeWidth)
+inline Varying2D VaryingGeneratorLengthWidth::r1(float strokeLength, float strokeWidth)
 {
-    return VaryingUV(strokeLength * lengthFactor, strokeWidth * widthFactor);
+    return Varying2D(strokeLength * lengthFactor, strokeWidth * widthFactor);
 }
 
 
 
-inline VaryingUV VaryingGeneratorLengthWidth::l0(float strokeLength, float strokeWidth)
+inline Varying2D VaryingGeneratorLengthWidth::l0(float strokeLength, float strokeWidth)
 {
-    return VaryingUV(strokeLength * lengthFactor, -strokeWidth * widthFactor);
+    return Varying2D(strokeLength * lengthFactor, -strokeWidth * widthFactor);
 }
 
 
 
-inline VaryingUV VaryingGeneratorLengthWidth::l1(float strokeLength, float strokeWidth)
+inline Varying2D VaryingGeneratorLengthWidth::l1(float strokeLength, float strokeWidth)
 {
-    return VaryingUV(strokeLength * lengthFactor, -strokeWidth * widthFactor);
+    return Varying2D(strokeLength * lengthFactor, -strokeWidth * widthFactor);
 }
 
 

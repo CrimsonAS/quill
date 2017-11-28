@@ -147,12 +147,12 @@ void runQuillBenchmark_continuous(int segments)
 
 struct SimpleFill
 {
-    typedef VaryingUV Varyings;
+    typedef Varying2D Varyings;
     RasterBuffer buffer;
-    void operator()(int x, int y, int length, VaryingUV v, VaryingUV dx) {
+    void operator()(int x, int y, int length, Varying2D v, Varying2D dx) {
         unsigned int *dst = buffer.scanline(y) + x;
         for (int i=0; i<length; ++i) {
-            float n = stb_perlin_noise3(v.u, v.v, 0.0f, 0, 0, 0);
+            float n = stb_perlin_noise3(v.x, v.y, 0.0f, 0, 0, 0);
             if (n > 0)
                 dst[i] = 0xffffffff;
             v = v + dx;

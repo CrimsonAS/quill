@@ -40,10 +40,10 @@ struct VaryingGeneratorNoop
 
 struct VaryingGeneratorLengthWidth
 {
-    VaryingUV r0(float strokeLength, float strokeWidth);
-    VaryingUV r1(float strokeLength, float strokeWidth);
-    VaryingUV l0(float strokeLength, float strokeWidth);
-    VaryingUV l1(float strokeLength, float strokeWidth);
+    Varying2D r0(float strokeLength, float strokeWidth);
+    Varying2D r1(float strokeLength, float strokeWidth);
+    Varying2D l0(float strokeLength, float strokeWidth);
+    Varying2D l1(float strokeLength, float strokeWidth);
 
     float lengthFactor = 0.01f;
     float widthFactor = 0.5f;
