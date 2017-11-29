@@ -61,9 +61,9 @@ int main(int argc, char **argv)
     ClipRaster<LerpRaster<SimpleFill>> clipper;
 
     clipper.x0 = 150;
-    clipper.y0 = 0;
+    clipper.y0 = 150;
     clipper.x1 = 350;
-    clipper.y1 = 180;
+    clipper.y1 = 350;
 
     RasterBuffer *buffer = &clipper.raster.fill.buffer;
     buffer->allocate(500, 500);

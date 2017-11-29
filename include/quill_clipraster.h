@@ -39,6 +39,7 @@ struct ClipRaster
     void clipBottom(Triangle t, Varyings a, Varyings b, Varyings c);
 
     void ySort(Triangle &t, Varyings &a, Varyings &b, Varyings &c);
+    void xSort(Triangle &t, Varyings &a, Varyings &b, Varyings &c);
 
     Raster raster;
 
