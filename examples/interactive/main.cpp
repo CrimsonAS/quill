@@ -25,7 +25,6 @@
 */
 
 #include <QtGui>
-#include <QtWidgets>
 
 #include "quill.h"
 
@@ -34,10 +33,10 @@
 
 using namespace Quill;
 
-class Widget : public QWidget
+class Window : public QRasterWindow
 {
 public:
-    Widget()
+    Window()
     {
         m_timer.start();
     }
@@ -89,10 +88,10 @@ private:
 
 int main(int argc, char **argv)
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
-    Widget widget;
-    widget.show();
+    Window window;
+    window.show();
 
     return app.exec();
 }

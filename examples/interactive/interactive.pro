@@ -3,6 +3,7 @@ TARGET = interactive
 QT += widgets
 
 CONFIG -= app_bundle
+CONFIG += debug
 
 INCLUDEPATH += .. ../../include
 
