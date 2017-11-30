@@ -79,6 +79,9 @@ struct Stroker
         float width;
         float length;
 
+        Varyings leftVarying;
+        Varyings rightVarying;
+
         SegmentType type : 2;
         JoinStyle joinStyle : 2;
         CapStyle capStyle : 2;
@@ -91,14 +94,18 @@ struct Stroker
                 float width = 1.0f,
                 float length = 0.0f,
                 JoinStyle joinStyle = BevelJoin,
-                CapStyle capStyle = FlatCap);
+                CapStyle capStyle = FlatCap,
+                Varyings left = Varyings(),
+                Varyings right = Varyings());
     };
 
-    void store(float x, float y, SegmentType type);
+    void store(float x, float y, SegmentType type, Varyings left, Varyings right);
 
     void cap(Line left, Line right, Segment s, bool endCap);
-    void join(Line lastLeft, Line lastRight, Line left, Line right, float length, float width);
-    void stroke(Line left, Line right, float length, float startWidth, float endWidth);
+    void join(Line lastLeft, Line lastRight, Line left, Line right, Varyings leftVarying, Varyings rightVarying);
+    void stroke(Line left, Line right,
+                Varyings lastLeftVarying, Varyings lastRightVarying,
+                Varyings leftVarying, Varyings rightVarying);
 
     Segment m_lastSegment;
     Line m_lastLeft;

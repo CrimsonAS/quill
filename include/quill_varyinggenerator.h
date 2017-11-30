@@ -30,21 +30,17 @@
 
 struct VaryingGeneratorNoop
 {
-    VaryingNoop r0(float strokeLength, float strokeWidth);
-    VaryingNoop r1(float strokeLength, float strokeWidth);
-    VaryingNoop l0(float strokeLength, float strokeWidth);
-    VaryingNoop l1(float strokeLength, float strokeWidth);
+    VaryingNoop left(float strokeLength, float strokeWidth);
+    VaryingNoop right(float strokeLength, float strokeWidth);
 };
 
 
 
 struct VaryingGeneratorLengthWidth
 {
-    Varying2D r0(float strokeLength, float strokeWidth);
-    Varying2D r1(float strokeLength, float strokeWidth);
-    Varying2D l0(float strokeLength, float strokeWidth);
-    Varying2D l1(float strokeLength, float strokeWidth);
+    Varying2D left(float strokeLength, float strokeWidth);
+    Varying2D right(float strokeLength, float strokeWidth);
 
-    float lengthFactor = 0.01f;
-    float widthFactor = 0.5f;
+    float lengthFactor = 1.0f;
+    float widthFactor = 1.0f;
 };

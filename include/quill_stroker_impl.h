@@ -31,11 +31,16 @@
 // #define QUILL_STROKER_NO_LINES
 
 template <typename Rasterizer, typename VaryingGenerator>
-Stroker<Rasterizer, VaryingGenerator>::Segment::Segment(SegmentType type, float x, float y, float width, float length, JoinStyle joinStyle, CapStyle capStyle)
+Stroker<Rasterizer, VaryingGenerator>::Segment::Segment(SegmentType type,
+                                                        float x, float y, float width, float length,
+                                                        JoinStyle joinStyle, CapStyle capStyle,
+                                                        Varyings left, Varyings right)
     : x(x)
     , y(y)
     , width(width)
     , length(length)
+    , leftVarying(left)
+    , rightVarying(right)
     , type(type)
     , joinStyle(joinStyle)
     , capStyle(capStyle)
@@ -61,9 +66,12 @@ Stroker<Rasterizer, VaryingGenerator>::Stroker()
 
 
 template <typename Rasterizer, typename VaryingGenerator>
-void Stroker<Rasterizer, VaryingGenerator>::store(float x, float y, SegmentType type)
+void Stroker<Rasterizer, VaryingGenerator>::store(float x, float y, SegmentType type, Varyings left, Varyings right)
 {
-    m_lastSegment = Segment(type, x, y, width, length, joinStyle, capStyle);
+    m_lastSegment = Segment(type,
+                            x, y, width, length,
+                            joinStyle, capStyle,
+                            left, right);
 }
 
 
@@ -77,7 +85,7 @@ void Stroker<Rasterizer, VaryingGenerator>::moveTo(float x, float y)
         cap(m_lastLeft, m_lastRight, m_lastSegment, true);
     }
 
-    store(x, y, MoveToSegment);
+    store(x, y, MoveToSegment, varying.left(length, width / 2), varying.right(length, width / 2));
     m_firstSegment = m_lastSegment;
 }
 
@@ -97,29 +105,36 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
     float ndy = (line.x1 - line.x0) / len;
 
 
-    float w2 = width / 2;
-    float cw2 = m_lastSegment.width / 2;
+    float chw = width / 2;
+    float lhw = m_lastSegment.width / 2;
 
     // std::cout << "lineTo(" << x << ", " << y << ")" << " length=" << len
-    //           << ", width=" << w2 << "(" << cw2 << ")"
+    //           << ", width=" << chw << "(" << lhw << ")"
     //           << ", normal=" << ndx << "," << ndy << ", totalLength=" << length
     //           << std::endl;
 
-    Line right(line.x0 + ndx * cw2,
-               line.y0 + ndy * cw2,
-               line.x1 + ndx * w2,
-               line.y1 + ndy * w2);
-    Line left(line.x0 - ndx * cw2,
-              line.y0 - ndy * cw2,
-              line.x1 - ndx * w2,
-              line.y1 - ndy * w2);
+    Line right(line.x0 + ndx * lhw,
+               line.y0 + ndy * lhw,
+               line.x1 + ndx * chw,
+               line.y1 + ndy * chw);
+    Line left(line.x0 - ndx * lhw,
+              line.y0 - ndy * lhw,
+              line.x1 - ndx * chw,
+              line.y1 - ndy * chw);
 
     if (m_lastSegment.type == LineToSegment) {
-        join(m_lastLeft, m_lastRight, left, right, length, cw2);
+        join(m_lastLeft, m_lastRight, left, right, m_lastSegment.leftVarying, m_lastSegment.rightVarying);
     }
 
+    length += len;
+    Varyings leftVarying = varying.left(length, chw);
+    Varyings rightVarying = varying.right(length, chw);
+
 #ifndef QUILL_STROKER_NO_LINES
-    stroke(left, right, length + len, cw2, w2);
+    stroke(left, right,
+           m_lastSegment.leftVarying, m_lastSegment.rightVarying,
+           leftVarying, rightVarying);
+
 #endif
 
     if (m_lastSegment.type == MoveToSegment) {
@@ -127,16 +142,15 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
         m_firstRight = right;
     }
 
-    length += len;
     m_lastLeft = left;
     m_lastRight = right;
-    store(x, y, LineToSegment);
+    store(x, y, LineToSegment, leftVarying, rightVarying);
 }
 
 
 
 template <typename Rasterizer, typename VaryingGenerator>
-void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, Line left, Line right, float len, float width)
+void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, Line left, Line right, Varyings leftVarying, Varyings rightVarying)
 {
 #ifdef QUILL_STROKER_NO_JOINS
     return;
@@ -144,7 +158,8 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
     if (joinStyle == BevelJoin || joinStyle == MiterJoin) {
         stroke(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
                Line(lastRight.x1, lastRight.y1, right.x0, right.y0),
-               len, width, width);
+               leftVarying, rightVarying,
+               leftVarying, rightVarying);
 
     } else if (joinStyle == RoundJoin) {
         float angleLast = std::atan2(lastLeft.y1 - m_lastSegment.y, lastLeft.x1 - m_lastSegment.x);
@@ -164,11 +179,12 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
         if (std::abs(angleDelta) < M_PI / 10) {
             stroke(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
                    Line(lastRight.x1, lastRight.y1, right.x0, right.y0),
-                   len, width, width);
+                   leftVarying, rightVarying,
+                   leftVarying, rightVarying);
             return;
         }
 
-        float radius = width;
+        float radius = width / 2;
         float arcLength = radius * angleDelta; // from (angleDelta / (2 * PI)) * (2 * PI * r)
 
         // Don't really know how long steps we have to take, but lets assume a
@@ -192,7 +208,8 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
 
             stroke(Line(llx, lly, lx, ly),
                    Line(lrx, lry, rx, ry),
-                   len, width, width);
+                   leftVarying, rightVarying,
+                   leftVarying, rightVarying);
 
             t += dt;
             llx = lx;
@@ -248,7 +265,8 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment s
 
             stroke(Line(lx, ly, nlx, nly),
                    Line(rx, ry, nrx, nry),
-                   segment.length, segment.width, segment.width);
+                   segment.leftVarying, segment.rightVarying,
+                   segment.leftVarying, segment.rightVarying);
 
             lx = nlx;
             ly = nly;
@@ -278,7 +296,8 @@ void Stroker<Rasterizer, VaryingGenerator>::close()
         //           << " - firstLeft:  " << m_firstLeft << std::endl
         //           << " - firstRight: " << m_firstRight << std::endl;
 
-        join(m_lastLeft, m_lastRight, m_firstLeft, m_firstRight, length, m_firstSegment.width);
+        join(m_lastLeft, m_lastRight, m_firstLeft, m_firstRight,
+             m_lastSegment.leftVarying, m_lastSegment.rightVarying);
     }
 }
 
@@ -310,21 +329,19 @@ void Stroker<Rasterizer, VaryingGenerator>::reset()
 }
 
 template <typename Rasterizer, typename VaryingGenerator>
-void Stroker<Rasterizer, VaryingGenerator>::stroke(Line left, Line right, float newLength, float startWidth, float endWidth)
+void Stroker<Rasterizer, VaryingGenerator>::stroke(Line left, Line right,
+                                                   Varyings vl0, Varyings vr0,
+                                                   Varyings vl1, Varyings vr1)
 {
     raster(Triangle(Vertex(left.x0, left.y0),
                     Vertex(left.x1, left.y1),
                     Vertex(right.x0, right.y0)),
-           varying.l0(length, startWidth),
-           varying.l1(newLength, endWidth),
-           varying.r0(length, startWidth));
+                    vl0, vl1, vr0);
 
     raster(Triangle(Vertex(right.x0, right.y0),
                     Vertex(left.x1, left.y1),
                     Vertex(right.x1, right.y1)),
-           varying.r0(length, startWidth),
-           varying.l1(newLength, endWidth),
-           varying.r1(newLength, endWidth));
+                    vr0, vl1, vr1);
 
     triangleCount += 2;
 }

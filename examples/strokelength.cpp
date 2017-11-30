@@ -43,16 +43,32 @@ using namespace Quill;
 using namespace std;
 using namespace std::chrono;
 
+struct VarGen
+{
+    float a = 0.0f;
+    float b = 0.0f;
+    float lengthFactor = 0.01f;
+    float widthFactor = 0.5f;
+
+    Varying4D right(float length, float width) {
+        return Varying4D(length * lengthFactor, -width * widthFactor, a, b);
+    }
+
+    Varying4D left(float length, float width) {
+        return Varying4D(length * lengthFactor, width * widthFactor, a, b);
+    }
+};
+
 struct FbmFill
 {
-    typedef Varying2D Varyings;
+    typedef Varying4D Varyings;
     RasterBuffer buffer;
-    void operator()(int x, int y, int length, Varying2D v, Varying2D dx);
+    void operator()(int x, int y, int length, Varyings v, Varyings dv);
 };
 
 
 
-void FbmFill::operator()(int x, int y, int length, Varyings v, Varying2D dx)
+void FbmFill::operator()(int x, int y, int length, Varyings v, Varyings dv)
 {
     unsigned int *dst = buffer.scanline(y) + x;
     for (int i=0; i<length; ++i) {
@@ -62,11 +78,13 @@ void FbmFill::operator()(int x, int y, int length, Varyings v, Varying2D dx)
                                         6,           // octaves
                                         0, 0, 0);    // x/y/z wrap
         if (n > 0) {
-            int x = n * 255;
-            dst[i] = 0xff000000 | x | (x << 8) | (x << 16);
+            int red = (v.z * n) * 255;
+            int green = (v.w * n) * 255;
+            int blue = n * 255;
+            dst[i] = 0xff000000 | (blue << 16) | (green << 8) | red;
         }
 
-        v = v + dx;
+        v = v + dv;
     }
 }
 
@@ -74,7 +92,7 @@ void FbmFill::operator()(int x, int y, int length, Varyings v, Varying2D dx)
 
 void doFbmStroke()
 {
-    Stroker<LerpRaster<FbmFill>, VaryingGeneratorLengthWidth> stroker;
+    Stroker<LerpRaster<FbmFill>, VarGen> stroker;
 
     RasterBuffer *buffer = &stroker.raster.fill.buffer;
     buffer->allocate(800, 800);
@@ -87,6 +105,9 @@ void doFbmStroke()
     for (int i=0; i<COUNT; ++i) {
 
         float t = i / float(COUNT);
+
+        stroker.varying.a = t;
+        stroker.varying.b = 1.0f - t;
 
         float x = 100 + t * 600;
         float y = 600 + 100 * cos(4 * t * M_PI) - t * 400;
