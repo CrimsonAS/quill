@@ -80,7 +80,7 @@ template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::moveTo(float x, float y)
 {
     // std::cout << "moveTo(" << x << ", " << y << ")" << std::endl;
-    if (m_lastSegment.type != InvalidType) {
+    if (m_lastSegment.type == LineToSegment) {
         cap(m_firstLeft, m_firstRight, m_firstSegment, false);
         cap(m_lastLeft, m_lastRight, m_lastSegment, true);
     }
