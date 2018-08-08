@@ -187,7 +187,10 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
             return;
         }
 
-        float radius = width / 2;
+        // Decide the radius based on the previous segment. We're joining from
+        // it, and if the width is changing, 'width' will already have been set
+        // to the new value.
+        float radius = m_lastSegment.width / 2;
         float arcLength = radius * angleDelta; // from (angleDelta / (2 * PI)) * (2 * PI * r)
 
         // Don't really know how long steps we have to take, but lets assume a
