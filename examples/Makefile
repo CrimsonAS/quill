@@ -6,7 +6,7 @@ CC		 := g++
 
 
 
-all: hello triangle strokelength mono_vs_lerp joinstyles rectclip
+all: hello triangle strokelength mono_vs_lerp joinstyles rectclip triangles_in_line
 
 
 
@@ -28,6 +28,8 @@ joinstyles: joinstyles.cpp
 rectclip: rectclip.cpp
 	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) rectclip.cpp $(LIBS) -o rectclip
 
+triangles_in_line: triangles_in_line.cpp
+	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) triangles_in_line.cpp $(LIBS) -o triangles_in_line
 
 
 clean:
@@ -37,3 +39,4 @@ clean:
 	@rm -f mono_vs_lerp
 	@rm -f joinstyles
 	@rm -f rectclip
+	@rm -f triangles_in_line

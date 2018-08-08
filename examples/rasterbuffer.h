@@ -33,8 +33,11 @@ struct RasterBuffer
 
     unsigned int *data = nullptr;
 
+    bool ownsData = true;
+
     ~RasterBuffer();
 
+    void reference(const RasterBuffer &master);
     void allocate(unsigned int w, unsigned int h);
     void release();
 
@@ -54,11 +57,27 @@ inline void RasterBuffer::allocate(unsigned int width, unsigned int height)
     this->width = width;
     this->height = height;
     data = new unsigned int[width * height];
+    ownsData = true;
+}
+
+inline void RasterBuffer::reference(const RasterBuffer &master)
+{
+    assert(!data);
+
+    width = master.width;
+    height = master.height;
+    data = master.data;
+    ownsData = false;
 }
 
 inline void RasterBuffer::release()
 {
-    delete [] data;
+    if (ownsData) {
+        delete [] data;
+    }
+    data = 0;
+    width = 0;
+    height = 0;
 }
 
 inline unsigned int *RasterBuffer::scanline(unsigned int y)
