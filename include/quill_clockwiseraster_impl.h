@@ -1,5 +1,6 @@
 /*
     Copyright (c) 2018, Gunnar Sletta <gunnar@crimson.no>
+    Copyright (c) 2018, reMarkable AS <technology@remarkable.no>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -25,40 +26,19 @@
 
 #pragma once
 
-#include <iostream>
-#include <cassert>
-#include <cmath>
-#include <cstring>
+template <typename Raster>
+void ClockwiseRaster<Raster>::operator()(Triangle t, Varyings a, Varyings b, Varyings c)
+{
+    // Check if we're clockwise or not by looking at the direction of the
+    // z-component of the cross product.
+    Vertex u = t.b - t.a;
+    Vertex v = t.c - t.a;
+    float z = u.x * v.y -   u.y * v.x;
 
-namespace Quill {
+    if (z < 0) {
+        t = Triangle(t.a, t.c, t.b);
+        std::swap(b, c);
+    }
 
-    // Delcarations
-    #include "quill_line.h"
-    #include "quill_vertex.h"
-    #include "quill_triangle.h"
-    #include "quill_varying.h"
-    #include "quill_varyinggenerator.h"
-
-    #include "quill_clockwiseraster.h"
-    #include "quill_clipraster.h"
-    #include "quill_lerpraster.h"
-    #include "quill_monoraster.h"
-
-    #include "quill_stroker.h"
-
-    // Implementations
-    #include "quill_line_impl.h"
-    #include "quill_vertex_impl.h"
-    #include "quill_triangle_impl.h"
-    #include "quill_varying_impl.h"
-    #include "quill_varyinggenerator_impl.h"
-
-    #include "quill_clockwiseraster_impl.h"
-    #include "quill_clipraster_impl.h"
-    #include "quill_lerpraster_impl.h"
-    #include "quill_monoraster_impl.h"
-
-    #include "quill_stroker_impl.h"
-
-
-};
+    raster(t, a, b, c);
+}
