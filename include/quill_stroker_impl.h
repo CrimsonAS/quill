@@ -1,6 +1,6 @@
 /*
-    Copyright (c) 2017, Gunnar Sletta <gunnar@crimson.no>
-    Copyright (c) 2017, reMarkable AS <technology@remarkable.no>
+    Copyright (c) 2018, Gunnar Sletta <gunnar@crimson.no>
+    Copyright (c) 2018, reMarkable AS <technology@remarkable.no>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -155,11 +155,13 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
 #ifdef QUILL_STROKER_NO_JOINS
     return;
 #endif
+
     if (joinStyle == BevelJoin || joinStyle == MiterJoin) {
         stroke(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
                Line(lastRight.x1, lastRight.y1, right.x0, right.y0),
                leftVarying, rightVarying,
-               leftVarying, rightVarying);
+               leftVarying, rightVarying,
+               true);
 
     } else if (joinStyle == RoundJoin) {
         float angleLast = std::atan2(lastLeft.y1 - m_lastSegment.y, lastLeft.x1 - m_lastSegment.x);
@@ -177,10 +179,11 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
         // per-wise and that it at the same time doesn't cause too much of a visual
         // impact..
         if (std::abs(angleDelta) < M_PI / 10) {
-            stroke(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
-                   Line(lastRight.x1, lastRight.y1, right.x0, right.y0),
+            stroke(Line(left.x0, left.y0, lastLeft.x1, lastLeft.y1),
+                   Line(right.x0, right.y0, lastRight.x1, lastRight.y1),
                    leftVarying, rightVarying,
-                   leftVarying, rightVarying);
+                   leftVarying, rightVarying,
+                   true);
             return;
         }
 
@@ -209,7 +212,8 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
             stroke(Line(llx, lly, lx, ly),
                    Line(lrx, lry, rx, ry),
                    leftVarying, rightVarying,
-                   leftVarying, rightVarying);
+                   leftVarying, rightVarying,
+                   true);
 
             t += dt;
             llx = lx;
@@ -331,8 +335,25 @@ void Stroker<Rasterizer, VaryingGenerator>::reset()
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::stroke(Line left, Line right,
                                                    Varyings vl0, Varyings vr0,
-                                                   Varyings vl1, Varyings vr1)
+                                                   Varyings vl1, Varyings vr1,
+                                                   bool checkDirection)
 {
+    if (checkDirection) {
+        // Catch the case where we've decided to stroke lines that pass in
+        // opposite directions. This typically happens whenever we join two line
+        // segments as the interior of the curve is wrapped back on itself then.
+
+        // We do this by projecting right onto left and checking the
+        // direction. Since we only care about the sign and not the length, we
+        // can skip the sqrt() and simplify the function a bit
+
+        if (((right.x1-right.x0) * (left.x1-left.x0)) + ((right.y1-right.y0) * (left.y1-left.y0)) < 0) {
+            // If opposite, flip the right line and its varyings..
+            right = Line(right.x1, right.y1, right.x0, right.y0);
+            std::swap(vr0, vr1);
+        }
+    }
+
     raster(Triangle(Vertex(left.x0, left.y0),
                     Vertex(left.x1, left.y1),
                     Vertex(right.x0, right.y0)),

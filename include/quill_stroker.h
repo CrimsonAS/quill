@@ -1,6 +1,6 @@
 /*
-    Copyright (c) 2017, Gunnar Sletta <gunnar@crimson.no>
-    Copyright (c) 2017, reMarkable AS <technology@remarkable.no>
+    Copyright (c) 2018, Gunnar Sletta <gunnar@crimson.no>
+    Copyright (c) 2018, reMarkable AS <technology@remarkable.no>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -105,7 +105,8 @@ struct Stroker
     void join(Line lastLeft, Line lastRight, Line left, Line right, Varyings leftVarying, Varyings rightVarying);
     void stroke(Line left, Line right,
                 Varyings lastLeftVarying, Varyings lastRightVarying,
-                Varyings leftVarying, Varyings rightVarying);
+                Varyings leftVarying, Varyings rightVarying,
+                bool checkDirection = false);
 
     Segment m_lastSegment;
     Line m_lastLeft;
