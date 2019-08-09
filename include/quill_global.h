@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2018, Gunnar Sletta <gunnar@crimson.no>
+    Copyright (c) 2019, reMarkable AS <technology@remarkable.no>
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -25,42 +25,10 @@
 
 #pragma once
 
-#include <iostream>
-#include <cassert>
-#include <cmath>
-#include <cstring>
-
-namespace Quill {
-    // Various utilities
-    #include "quill_global.h"
-
-    // Declarations
-    #include "quill_line.h"
-    #include "quill_vertex.h"
-    #include "quill_triangle.h"
-    #include "quill_varying.h"
-    #include "quill_varyinggenerator.h"
-
-    #include "quill_clockwiseraster.h"
-    #include "quill_clipraster.h"
-    #include "quill_lerpraster.h"
-    #include "quill_monoraster.h"
-
-    #include "quill_stroker.h"
-
-    // Implementations
-    #include "quill_line_impl.h"
-    #include "quill_vertex_impl.h"
-    #include "quill_triangle_impl.h"
-    #include "quill_varying_impl.h"
-    #include "quill_varyinggenerator_impl.h"
-
-    #include "quill_clockwiseraster_impl.h"
-    #include "quill_clipraster_impl.h"
-    #include "quill_lerpraster_impl.h"
-    #include "quill_monoraster_impl.h"
-
-    #include "quill_stroker_impl.h"
-
-
-};
+#if defined(_MSC_VER)
+#define QUILL_IS_LIKELY(x)      (x)
+#define QUILL_IS_UNLIKELY(x)    (x)
+#else//_MSC_VER
+#define QUILL_IS_LIKELY(x)      __builtin_expect(!!(x), 1)
+#define QUILL_IS_UNLIKELY(x)    __builtin_expect(!!(x), 0)
+#endif // _MSC_VER

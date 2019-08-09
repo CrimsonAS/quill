@@ -35,7 +35,7 @@ inline Varying2D operator-(Varying2D a, float u)     { return Varying2D(a.x - u,
 inline Varying2D operator-(float u, Varying2D a)     { return Varying2D(u - a.x,   u - a.y);   }
 inline Varying2D operator*(Varying2D a, float u)     { return Varying2D(a.x * u,   a.y * u);   }
 inline Varying2D operator*(float u, Varying2D a)     { return Varying2D(u * a.x,   u * a.y);   }
-inline Varying2D operator/(Varying2D a, float u)     { return Varying2D(a.x / u,   a.y / u);   }
+inline Varying2D operator/(Varying2D a, float u)     { if (QUILL_IS_UNLIKELY(u == 0)) return Varying2D(0, 0); return Varying2D(a.x / u,   a.y / u);   }
 
 inline std::ostream &operator<<(std::ostream &o, Varying2D v)
 {
@@ -52,7 +52,7 @@ inline Varying3D operator-(Varying3D a, float u)     { return Varying3D(a.x - u,
 inline Varying3D operator-(float u, Varying3D a)     { return Varying3D(u - a.x,   u - a.y,   u - a.z);   }
 inline Varying3D operator*(Varying3D a, float u)     { return Varying3D(a.x * u,   a.y * u,   a.z * u);   }
 inline Varying3D operator*(float u, Varying3D a)     { return Varying3D(u * a.x,   u * a.y,   u * a.z);   }
-inline Varying3D operator/(Varying3D a, float u)     { return Varying3D(a.x / u,   a.y / u,   a.z / u);   }
+inline Varying3D operator/(Varying3D a, float u)     { if (QUILL_IS_UNLIKELY(u == 0)) return Varying3D(0, 0);return Varying3D(a.x / u,   a.y / u,   a.z / u);   }
 
 inline std::ostream &operator<<(std::ostream &o, Varying3D v)
 {
@@ -69,7 +69,7 @@ inline Varying4D operator-(Varying4D a, float u)     { return Varying4D(a.x - u,
 inline Varying4D operator-(float u, Varying4D a)     { return Varying4D(u - a.x,   u - a.y,   u - a.z,   u - a.w);   }
 inline Varying4D operator*(Varying4D a, float u)     { return Varying4D(a.x * u,   a.y * u,   a.z * u,   a.w * u);   }
 inline Varying4D operator*(float u, Varying4D a)     { return Varying4D(u * a.x,   u * a.y,   u * a.z,   u * a.w);   }
-inline Varying4D operator/(Varying4D a, float u)     { return Varying4D(a.x / u,   a.y / u,   a.z / u,   a.w / u);   }
+inline Varying4D operator/(Varying4D a, float u)     { if (QUILL_IS_UNLIKELY(u == 0)) return Varying4D(0, 0, 0, 0); return Varying4D(a.x / u,   a.y / u,   a.z / u,   a.w / u);   }
 
 inline std::ostream &operator<<(std::ostream &o, Varying4D v)
 {
