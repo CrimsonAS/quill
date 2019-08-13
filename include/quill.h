@@ -40,8 +40,10 @@
 #include <cstring>
 
 namespace Quill {
+    // Various utilities
+    #include "quill_global.h"
 
-    // Delcarations
+    // Declarations
     #include "quill_line.h"
     #include "quill_vertex.h"
     #include "quill_triangle.h"
