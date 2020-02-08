@@ -108,9 +108,15 @@ inline Vertex operator/(Vertex a, float x)
 
 
 
+inline bool operator==(Vertex a, Vertex b)
+{
+    return a.x == b.x && a.y == b.y;
+}
+
+
+
 inline std::ostream &operator<<(std::ostream &o, Vertex v)
 {
     o << "[" << v.x << "," << v.y << "]";
     return o;
 }
-
