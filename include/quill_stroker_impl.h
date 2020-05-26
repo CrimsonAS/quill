@@ -181,7 +181,6 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
         } else if (angleDelta > M_PI) {
             angleDelta -= M_PI * 2;
         }
-        assert(angleDelta <= M_PI && angleDelta >= -M_PI);
 
         // Shortcut with a bevel join for 'tiny' angles.
         // ### premature-optimization: Need to verify that this makes sense
