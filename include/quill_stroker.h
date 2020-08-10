@@ -94,8 +94,6 @@ struct Stroker
         JoinStyle joinStyle : 2;
         CapStyle capStyle : 2;
 
-        unsigned int reserved : 26;
-
         Segment(SegmentType type = InvalidType,
                 float x = 0.0f,
                 float y = 0.0f,
