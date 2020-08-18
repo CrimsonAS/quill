@@ -321,10 +321,13 @@ void Stroker<Rasterizer, VaryingGenerator>::close()
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::finish()
 {
-    if (m_lastSegment.type == LineToSegment &&
-        (m_lastSegment.x != m_firstSegment.x || m_lastSegment.y != m_firstSegment.y)) {
-        cap(m_firstLeft, m_firstRight, m_firstSegment, false);
-        cap(m_lastLeft, m_lastRight, m_lastSegment, true);
+    if (m_lastSegment.type == LineToSegment) {
+        if (m_lastSegment.x == m_firstSegment.x && m_lastSegment.y == m_firstSegment.y) {
+            close();
+        } else {
+            cap(m_firstLeft, m_firstRight, m_firstSegment, false);
+            cap(m_lastLeft, m_lastRight, m_lastSegment, true);
+        }
     }
 
     reset();
