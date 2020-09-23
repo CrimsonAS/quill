@@ -213,8 +213,8 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
         float dt = angleDelta / steps;
         float t = angleLast + dt;
         for (int i=0; i<steps; ++i) {
-            float ct = radius * cos(t);
-            float st = radius * sin(t);
+            float ct = radius * std::cos(t);
+            float st = radius * std::sin(t);
             float lx = m_lastSegment.x + ct;
             float ly = m_lastSegment.y + st;
             float rx = m_lastSegment.x - ct;
@@ -273,10 +273,10 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment s
         steps = std::max(1, steps / 2);
 
         for (int i=0; i<steps; ++i) {
-            float nlx = radius * cos(lt) + segment.x;
-            float nly = radius * sin(lt) + segment.y;
-            float nrx = radius * cos(rt) + segment.x;
-            float nry = radius * sin(rt) + segment.y;
+            float nlx = radius * std::cos(lt) + segment.x;
+            float nly = radius * std::sin(lt) + segment.y;
+            float nrx = radius * std::cos(rt) + segment.x;
+            float nry = radius * std::sin(rt) + segment.y;
 
             stroke(Line(lx, ly, nlx, nly),
                    Line(rx, ry, nrx, nry),
