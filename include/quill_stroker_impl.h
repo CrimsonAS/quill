@@ -35,6 +35,9 @@
 
 #pragma once
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 // #define QUILL_STROKER_NO_JOINS
 // #define QUILL_STROKER_NO_CAPS
 // #define QUILL_STROKER_NO_LINES
