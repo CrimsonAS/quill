@@ -73,7 +73,7 @@ struct Stroker
     // Internals
     //
 
-    typedef typename Rasterizer::Varyings Varyings;
+    using Varyings = typename Rasterizer::Varyings;
 
     enum SegmentType {
         InvalidType,
