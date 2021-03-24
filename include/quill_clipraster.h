@@ -37,7 +37,7 @@
 template <typename Raster>
 struct ClipRaster
 {
-    typedef typename Raster::Varyings Varyings;
+    using Varyings = typename Raster::Varyings;
 
     void operator()(Triangle t, Varyings a, Varyings b, Varyings c);
 
