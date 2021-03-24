@@ -38,7 +38,7 @@
 template <typename FillFunction>
 struct LerpRaster
 {
-    typedef typename FillFunction::Varyings Varyings;
+    using Varyings = typename FillFunction::Varyings;
 
     void operator()(Triangle t, Varyings a, Varyings b, Varyings c);
 
