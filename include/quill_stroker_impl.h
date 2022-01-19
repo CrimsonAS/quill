@@ -43,19 +43,19 @@
 // #define QUILL_STROKER_NO_LINES
 
 template <typename Rasterizer, typename VaryingGenerator>
-Stroker<Rasterizer, VaryingGenerator>::Segment::Segment(SegmentType type,
-                                                        float x, float y, float width, float length,
-                                                        JoinStyle joinStyle, CapStyle capStyle,
+Stroker<Rasterizer, VaryingGenerator>::Segment::Segment(SegmentType type_,
+                                                        float x_, float y_, float width_, float length_,
+                                                        JoinStyle joinStyle_, CapStyle capStyle_,
                                                         Varyings left, Varyings right)
-    : x(x)
-    , y(y)
-    , width(width)
-    , length(length)
+    : x(x_)
+    , y(y_)
+    , width(width_)
+    , length(length_)
     , leftVarying(left)
     , rightVarying(right)
-    , type(type)
-    , joinStyle(joinStyle)
-    , capStyle(capStyle)
+    , type(type_)
+    , joinStyle(joinStyle_)
+    , capStyle(capStyle_)
 {
 }
 
