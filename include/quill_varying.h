@@ -43,20 +43,20 @@ struct VaryingNoop
 
 
 struct Varying2D {
-    Varying2D(float x = 0.0f, float y = 0.0f) : x(x), y(y) { }
+    Varying2D(float x_ = 0.0f, float y_ = 0.0f) : x(x_), y(y_) { }
     float x;
     float y;
 };
 
 struct Varying3D {
-    Varying3D(float x = 0.0f, float y = 0.0f, float z = 0.0f) : x(x), y(y), z(z) { }
+    Varying3D(float x_ = 0.0f, float y_ = 0.0f, float z_ = 0.0f) : x(x_), y(y_), z(z_) { }
     float x;
     float y;
     float z;
 };
 
 struct Varying4D {
-    Varying4D(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) : x(x), y(y), z(z), w(w) { }
+    Varying4D(float x_ = 0.0f, float y_ = 0.0f, float z_ = 0.0f, float w_ = 0.0f) : x(x_), y(y_), z(z_), w(w_) { }
     float x;
     float y;
     float z;

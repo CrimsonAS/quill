@@ -37,10 +37,10 @@
 
 
 
-inline Triangle::Triangle(Vertex a, Vertex b, Vertex c)
-    : a(a)
-    , b(b)
-    , c(c)
+inline Triangle::Triangle(Vertex a_, Vertex b_, Vertex c_)
+    : a(a_)
+    , b(b_)
+    , c(c_)
 {
 }
 
