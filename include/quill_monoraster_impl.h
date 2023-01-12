@@ -42,10 +42,10 @@ void MonoRaster<SpansConsumer>::operator()(Triangle t, Varyings, Varyings, Varyi
     float y0Floored = std::floor(t.a.y);
     float y;
 
-    if (t.a.y - y0Floored <= 0.5) {
-        y = y0Floored + 0.5;
+    if (t.a.y - y0Floored <= 0.5f) {
+        y = y0Floored + 0.5f;
     } else {
-        y = y0Floored + 1.5;
+        y = y0Floored + 1.5f;
     }
 
     // std::cout << "rasterizing: " << t << " " << a << " " << b << " " << c << std::endl;
@@ -58,8 +58,8 @@ void MonoRaster<SpansConsumer>::operator()(Triangle t, Varyings, Varyings, Varyi
         float dxl = (t.b.x - t.a.x) / dy01;
         float dxr = (t.c.x - t.a.x) / dy02;
         float yoffset = y - t.a.y;
-        float left = t.a.x + dxl * yoffset + 0.5;
-        float right = t.a.x + dxr * yoffset + 0.5;
+        float left = t.a.x + dxl * yoffset + 0.5f;
+        float right = t.a.x + dxr * yoffset + 0.5f;
 
         // std::cout << " - "
         //     << "dy01=" << dy01
@@ -83,8 +83,8 @@ void MonoRaster<SpansConsumer>::operator()(Triangle t, Varyings, Varyings, Varyi
         float dy12 = (t.c.y - t.b.y);
         float dxl = (t.c.x - t.b.x) / dy12;
         float dxr = (t.c.x - t.a.x) / dy02;
-        float left = t.c.x - (t.c.y - y) * dxl + 0.5;
-        float right = t.c.x - (t.c.y - y) * dxr + 0.5;
+        float left = t.c.x - (t.c.y - y) * dxl + 0.5f;
+        float right = t.c.x - (t.c.y - y) * dxr + 0.5f;
         if (left > right) {
             std::swap(left, right);
             std::swap(dxl, dxr);
