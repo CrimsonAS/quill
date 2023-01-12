@@ -180,9 +180,9 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
         float angleNext = std::atan2(left.y0 - m_lastSegment.y, left.x0 - m_lastSegment.x);
         float angleDelta = angleNext - angleLast;
         if (angleDelta < -M_PI) {
-            angleDelta += M_PI * 2;
+            angleDelta += float(M_PI * 2);
         } else if (angleDelta > M_PI) {
-            angleDelta -= M_PI * 2;
+            angleDelta -= float(M_PI * 2);
         }
 
         // Shortcut with a bevel join for 'tiny' angles.
@@ -213,7 +213,7 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
         float lly = lastLeft.y1;
         float lrx = lastRight.x1;
         float lry = lastRight.y1;
-        float dt = angleDelta / steps;
+        float dt = angleDelta / float(steps);
         float t = angleLast + dt;
         for (int i=0; i<steps; ++i) {
             float ct = radius * std::cos(t);
@@ -260,7 +260,7 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment s
         float angle = std::atan2(left.y1 - segment.y, left.x1 - segment.x);
 
         float radius = segment.width / 2;
-        float arcLength = radius * M_PI; // half a circle..
+        float arcLength = float(radius * M_PI); // half a circle..
         int steps = std::min(30, int(std::ceil(std::abs(arcLength / M_PI))));
         assert(steps > 0);
 
@@ -269,8 +269,8 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment s
         float rx = right.x1;
         float ry = right.y1;
 
-        float dt = M_PI / steps;
-        float rt = angle + M_PI - dt;
+        float dt = float(M_PI / steps);
+        float rt = angle + float(M_PI) - dt;
         float lt = angle + dt;
 
         steps = std::max(1, steps / 2);
