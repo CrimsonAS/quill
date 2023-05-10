@@ -34,13 +34,13 @@
 
 #pragma once
 
-enum CapStyle {
+enum CapStyle : uint8_t {
     FlatCap,
     SquareCap,
     RoundCap
 };
 
-enum JoinStyle {
+enum JoinStyle : uint8_t {
     BevelJoin,
     MiterJoin,
     RoundJoin
@@ -75,7 +75,7 @@ struct Stroker
 
     using Varyings = typename Rasterizer::Varyings;
 
-    enum SegmentType {
+    enum SegmentType : uint8_t {
         InvalidType,
         MoveToSegment,
         LineToSegment
