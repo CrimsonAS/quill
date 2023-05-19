@@ -90,9 +90,9 @@ struct Stroker
         Varyings leftVarying;
         Varyings rightVarying;
 
-        SegmentType type : 2;
-        JoinStyle joinStyle : 2;
-        CapStyle capStyle : 2;
+        SegmentType type;
+        JoinStyle joinStyle;
+        CapStyle capStyle;
 
         Segment(SegmentType type = InvalidType,
                 float x = 0.0f,
