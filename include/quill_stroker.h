@@ -69,6 +69,9 @@ struct Stroker
 
     void reset();
 
+    void flushStartCap();
+    void flushEndCap();
+
     // ********************
     // Internals
     //
@@ -105,9 +108,11 @@ struct Stroker
                 Varyings right = Varyings());
     };
 
+    void cap(Line left, Line right, Segment s, bool endCap);
+
     void store(float x, float y, SegmentType type, Varyings left, Varyings right);
 
-    void cap(Line left, Line right, Segment s, bool endCap);
+
     void join(Line lastLeft, Line lastRight, Line left, Line right, Varyings leftVarying, Varyings rightVarying);
     void stroke(Line left, Line right,
                 Varyings lastLeftVarying, Varyings lastRightVarying,
@@ -121,4 +126,7 @@ struct Stroker
     Segment m_firstSegment;
     Line m_firstLeft;
     Line m_firstRight;
+
+    bool m_startCapRendered = false;
+    bool m_endCapRendered = false;
 };

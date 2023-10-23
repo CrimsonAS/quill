@@ -93,8 +93,8 @@ void Stroker<Rasterizer, VaryingGenerator>::moveTo(float x, float y)
 {
     // std::cout << "moveTo(" << x << ", " << y << ")" << std::endl;
     if (m_lastSegment.type == LineToSegment) {
-        cap(m_firstLeft, m_firstRight, m_firstSegment, false);
-        cap(m_lastLeft, m_lastRight, m_lastSegment, true);
+        flushStartCap();
+        flushEndCap();
     }
 
     store(x, y, MoveToSegment, varying.left(length, width / 2), varying.right(length, width / 2));
@@ -304,6 +304,29 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment s
 }
 
 
+
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::flushStartCap()
+{
+    if (!m_startCapRendered && length > 0.0f) {
+        cap(m_firstLeft, m_firstRight, m_firstSegment, false);
+        m_startCapRendered = true;
+    }
+}
+
+
+
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::flushEndCap()
+{
+    if (!m_endCapRendered && length > 0.0f) {
+        cap(m_lastLeft, m_lastRight, m_lastSegment, true);
+        m_endCapRendered = true;
+    }
+}
+
+
+
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::close()
 {
@@ -331,8 +354,8 @@ void Stroker<Rasterizer, VaryingGenerator>::finish()
         if (m_lastSegment.x == m_firstSegment.x && m_lastSegment.y == m_firstSegment.y) {
             close();
         } else {
-            cap(m_firstLeft, m_firstRight, m_firstSegment, false);
-            cap(m_lastLeft, m_lastRight, m_lastSegment, true);
+            flushStartCap();
+            flushEndCap();
         }
     }
 
@@ -350,6 +373,8 @@ void Stroker<Rasterizer, VaryingGenerator>::reset()
     m_firstSegment = Segment();
     triangleCount = 0;
     length = 0;
+    m_startCapRendered = false;
+    m_endCapRendered = false;
 }
 
 template <typename Rasterizer, typename VaryingGenerator>
