@@ -106,7 +106,10 @@ void Stroker<Rasterizer, VaryingGenerator>::moveTo(float x, float y)
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
 {
-    assert(m_lastSegment.type != InvalidType);
+    if (m_lastSegment.type == InvalidType) {
+        moveTo(x, y);
+        return;
+    }
 
     if (m_lastSegment.x == x && m_lastSegment.y == y)
         return;
