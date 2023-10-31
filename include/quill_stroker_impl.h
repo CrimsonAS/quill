@@ -254,12 +254,17 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment s
     if (segment.width <= 0.0f)
         return;
 
+    if (capStyle == FlatCap) {
+        return;
+    }
+
+    if (!endCap) {
+        Line tmp(left.x1, left.y1, left.x0, left.y0);
+        left = Line(right.x1, right.y1, right.x0, right.y0);
+        right = tmp;
+    }
+
     if (capStyle == RoundCap) {
-        if (!endCap) {
-            Line tmp(left.x1, left.y1, left.x0, left.y0);
-            left = Line(right.x1, right.y1, right.x0, right.y0);
-            right = tmp;
-        }
         float angle = std::atan2(left.y1 - segment.y, left.x1 - segment.x);
 
         float radius = segment.width / 2;
@@ -296,11 +301,30 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment s
             ry = nry;
             rt -= dt;
         }
+    } else if (capStyle == SquareCap) {
+        const float w2 = width / 2.0f;
+
+        const float ldx = left.x1 - left.x0;
+        const float ldy = left.y1 - left.y0;
+        const float llen = std::sqrt(ldx * ldx + ldy * ldy);
+        const float nldx = ldx / llen;
+        const float nldy = ldy / llen;
+        const float lx = left.x1 + nldx * w2;
+        const float ly = left.y1 + nldy * w2;
+
+        const float rdx = right.x1 - right.x0;
+        const float rdy = right.y1 - right.y0;
+        const float rlen = std::sqrt(rdx * rdx + rdy * rdy);
+        const float nrdx = rdx / rlen;
+        const float nrdy = rdy / rlen;
+        const float rx = right.x1 + nrdx * w2;
+        const float ry = right.y1 + nrdy * w2;
+
+        stroke(Line(left.x1, left.y1, lx, ly),
+               Line(right.x1, right.y1, rx, ry),
+               segment.leftVarying, segment.rightVarying,
+               segment.leftVarying, segment.rightVarying);
     }
-
-    // ### TODO: implement SquareCap...
-
-    // For FlatCap, do nothing..
 }
 
 
