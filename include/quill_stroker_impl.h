@@ -38,10 +38,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-// #define QUILL_STROKER_NO_JOINS
-// #define QUILL_STROKER_NO_CAPS
-// #define QUILL_STROKER_NO_LINES
-
 template <typename Rasterizer, typename VaryingGenerator>
 Stroker<Rasterizer, VaryingGenerator>::Segment::Segment(SegmentType type_,
                                                         float x_, float y_, float width_, float length_,
@@ -145,12 +141,9 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
     Varyings leftVarying = varying.left(length, chw);
     Varyings rightVarying = varying.right(length, chw);
 
-#ifndef QUILL_STROKER_NO_LINES
     stroke(left, right,
            m_lastSegment.leftVarying, m_lastSegment.rightVarying,
            leftVarying, rightVarying);
-
-#endif
 
     if (m_lastSegment.type == MoveToSegment) {
         m_firstLeft = left;
@@ -167,9 +160,6 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, Line left, Line right, Varyings leftVarying, Varyings rightVarying)
 {
-#ifdef QUILL_STROKER_NO_JOINS
-    return;
-#endif
 
     if (joinStyle == BevelJoin || joinStyle == MiterJoin) {
         stroke(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
@@ -245,9 +235,6 @@ void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, 
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment segment, bool endCap)
 {
-#ifdef QUILL_STROKER_NO_CAPS
-    return;
-#endif
     // std::cout << " - cap(" << segment.x << "," << segment.y << ", " << (endCap ? "end-cap" : "start-cap")
     //           << ", left=" << left << ", right=" << right << ", width=" << segment.width << std::endl;
 
