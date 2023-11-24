@@ -160,8 +160,7 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::join(Line lastLeft, Line lastRight, Line left, Line right, Varyings leftVarying, Varyings rightVarying)
 {
-
-    if (joinStyle == BevelJoin || joinStyle == MiterJoin) {
+    if (joinStyle == BevelJoin) {
         stroke(Line(lastLeft.x1, lastLeft.y1, left.x0, left.y0),
                Line(lastRight.x1, lastRight.y1, right.x0, right.y0),
                leftVarying, rightVarying,

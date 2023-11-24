@@ -42,7 +42,7 @@ enum CapStyle : uint8_t {
 
 enum JoinStyle : uint8_t {
     BevelJoin,
-    MiterJoin,
+    // MiterJoin, // not implemented, so lets not pretend
     RoundJoin
 };
 
