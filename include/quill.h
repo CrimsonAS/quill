@@ -38,6 +38,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstring>
+#include <optional>
 
 namespace Quill {
     // Various utilities
