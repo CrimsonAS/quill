@@ -1,12 +1,12 @@
 INCLUDES := -I../include
-CFLAGS   := --std=c++11 -O2 -Wall
+CFLAGS   := --std=c++17 -O2 -Wall
 DEFINES  :=
 LIBS     :=
 CC		 := g++
 
 
 
-all: hello triangle strokelength mono_vs_lerp joinstyles rectclip triangles_in_line
+all: hello triangle strokelength mono_vs_lerp joinstyles rectclip triangles_in_line slant
 
 
 
@@ -31,6 +31,8 @@ rectclip: rectclip.cpp
 triangles_in_line: triangles_in_line.cpp
 	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) triangles_in_line.cpp $(LIBS) -o triangles_in_line
 
+slant: slant.cpp
+	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) slant.cpp $(LIBS) -o slant
 
 clean:
 	@rm -f hello
@@ -40,3 +42,4 @@ clean:
 	@rm -f joinstyles
 	@rm -f rectclip
 	@rm -f triangles_in_line
+	@rm -f slant

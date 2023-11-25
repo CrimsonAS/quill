@@ -1,6 +1,6 @@
 /*
-    Copyright (c) 2019, reMarkable AS <technology@remarkable.no>
-    Copyright (c) 2019, Gunnar Sletta <gunnar@crimson.no>
+    Copyright (c) 2023, reMarkable AS <technology@remarkable.no>
+    Copyright (c) 2023, Gunnar Sletta <gunnar@crimson.no>
     All rights reserved.
 
 
@@ -78,7 +78,8 @@ void Stroker<Rasterizer, VaryingGenerator>::store(float x, float y, SegmentType 
 {
     m_lastSegment = Segment(type,
                             x, y, width, length,
-                            joinStyle, capStyle,
+                            joinStyle,
+                            capStyle,
                             left, right);
 }
 
@@ -110,11 +111,15 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
     if (m_lastSegment.x == x && m_lastSegment.y == y)
         return;
 
+    if (slant.has_value()) {
+        lineToSlanted(x, y);
+        return;
+    }
+
     Line line(m_lastSegment.x, m_lastSegment.y, x, y);
     float len = line.length();
     float ndx = (line.y0 - line.y1) / len;
     float ndy = (line.x1 - line.x0) / len;
-
 
     float chw = width / 2;
     float lhw = m_lastSegment.width / 2;
@@ -155,6 +160,74 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
     store(x, y, LineToSegment, leftVarying, rightVarying);
 }
 
+
+
+template <typename Rasterizer, typename VaryingGenerator>
+void Stroker<Rasterizer, VaryingGenerator>::lineToSlanted(float x, float y)
+{
+    assert(m_lastSegment.type != InvalidType);
+    assert(m_lastSegment.x != x || m_lastSegment.y != y);
+    assert(slant.has_value());
+
+    const Line line(m_lastSegment.x, m_lastSegment.y, x, y);
+    const float len = line.length();
+
+    // line normal
+    const float ndx = (line.y0 - line.y1) / len;
+    const float ndy = (line.x1 - line.x0) / len;
+
+    // current and last half-width
+    const float chw = width / 2;
+    const float lhw = m_lastSegment.width / 2;
+
+    // Figure out how wide the line ends up being. The width stands normal to
+    // the current line direction, so we can find that by taking finding the
+    // dot product between the slant vector and the line normal.
+    const float slantDotNormal = ndx * slant->nx + ndy * slant->ny;
+    const float effectiveWidth = std::abs(slantDotNormal) * width;
+
+    Line right(line.x0 + slant->nx * lhw,
+               line.y0 + slant->ny * lhw,
+               line.x1 + slant->nx * chw,
+               line.y1 + slant->ny * chw);
+    Line left(line.x0 - slant->nx * lhw,
+              line.y0 - slant->ny * lhw,
+              line.x1 - slant->nx * chw,
+              line.y1 - slant->ny * chw);
+
+    if (effectiveWidth < slant->minimumWidth) {
+        const float mw2 = slant->minimumWidth / 2.0f;
+        right = Line(line.x0 + ndx * mw2,
+                     line.y0 + ndy * mw2,
+                     line.x1 + ndx * mw2,
+                     line.y1 + ndy * mw2);
+        left = Line(line.x0 - ndx * mw2,
+                    line.y0 - ndy * mw2,
+                    line.x1 - ndx * mw2,
+                    line.y1 - ndy * mw2);
+    }
+
+    if (m_lastSegment.type == LineToSegment) {
+        join(m_lastLeft, m_lastRight, left, right, m_lastSegment.leftVarying, m_lastSegment.rightVarying);
+    }
+
+    length += len;
+    Varyings leftVarying = varying.left(length, chw);
+    Varyings rightVarying = varying.right(length, chw);
+
+    stroke(left, right,
+           m_lastSegment.leftVarying, m_lastSegment.rightVarying,
+           leftVarying, rightVarying);
+
+    if (m_lastSegment.type == MoveToSegment) {
+        m_firstLeft = left;
+        m_firstRight = right;
+    }
+
+    m_lastLeft = left;
+    m_lastRight = right;
+    store(x, y, LineToSegment, leftVarying, rightVarying);
+}
 
 
 template <typename Rasterizer, typename VaryingGenerator>

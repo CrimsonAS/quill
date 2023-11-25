@@ -1,6 +1,6 @@
 /*
-    Copyright (c) 2019, reMarkable AS <technology@remarkable.no>
-    Copyright (c) 2019, Gunnar Sletta <gunnar@crimson.no>
+    Copyright (c) 2023, reMarkable AS <technology@remarkable.no>
+    Copyright (c) 2023, Gunnar Sletta <gunnar@crimson.no>
     All rights reserved.
 
 
@@ -46,12 +46,26 @@ enum JoinStyle : uint8_t {
     RoundJoin
 };
 
+struct Slant
+{
+    float nx = 0.0f;
+    float ny = 0.0f;
+    float minimumWidth = 0.0f;
+
+    bool isValid() const {
+        const float almostZero = 0.0001f;
+        return std::abs(std::sqrt(nx * nx + ny * ny) - 1.0f) < almostZero;
+    }
+};
+
 template <typename Rasterizer, typename VaryingGenerator = VaryingGeneratorNoop>
 struct Stroker
 {
     JoinStyle joinStyle = BevelJoin;
     CapStyle capStyle   = FlatCap;
     float width         = 1.0f;
+
+    std::optional<Slant> slant;
 
     Rasterizer raster;
     VaryingGenerator varying;
@@ -108,10 +122,11 @@ struct Stroker
                 Varyings right = Varyings());
     };
 
+    void lineToSlanted(float x, float y);
+
     void cap(Line left, Line right, Segment s, bool endCap);
 
     void store(float x, float y, SegmentType type, Varyings left, Varyings right);
-
 
     void join(Line lastLeft, Line lastRight, Line left, Line right, Varyings leftVarying, Varyings rightVarying);
     void stroke(Line left, Line right,
