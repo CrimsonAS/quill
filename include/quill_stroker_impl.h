@@ -332,7 +332,7 @@ void Stroker<Rasterizer, VaryingGenerator>::cap(Line left, Line right, Segment s
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::flushStartCap()
 {
-    if (!m_startCapRendered && length > 0.0f) {
+    if (!m_startCapRendered && m_lastSegment.type == LineToSegment) {
         cap(m_firstLeft, m_firstRight, m_firstSegment, false);
         m_startCapRendered = true;
     }
@@ -343,7 +343,7 @@ void Stroker<Rasterizer, VaryingGenerator>::flushStartCap()
 template <typename Rasterizer, typename VaryingGenerator>
 void Stroker<Rasterizer, VaryingGenerator>::flushEndCap()
 {
-    if (!m_endCapRendered && length > 0.0f) {
+    if (!m_endCapRendered && m_lastSegment.type == LineToSegment) {
         cap(m_lastLeft, m_lastRight, m_lastSegment, true);
         m_endCapRendered = true;
     }
