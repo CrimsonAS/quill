@@ -51,7 +51,6 @@ namespace Quill {
     #include "quill_varying.h"
     #include "quill_varyinggenerator.h"
 
-    #include "quill_clockwiseraster.h"
     #include "quill_clipraster.h"
     #include "quill_lerpraster.h"
     #include "quill_monoraster.h"
@@ -65,7 +64,6 @@ namespace Quill {
     #include "quill_varying_impl.h"
     #include "quill_varyinggenerator_impl.h"
 
-    #include "quill_clockwiseraster_impl.h"
     #include "quill_clipraster_impl.h"
     #include "quill_lerpraster_impl.h"
     #include "quill_monoraster_impl.h"
