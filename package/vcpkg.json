@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/refs/heads/main/docs/vcpkg.schema.json",
+  "name": "quill-stroker",
+  "version-date": "2024-01-23",
+  "homepage": "https://github.com/CrimsonAS/quill",
+  "description": "Simple library for stroking along paths with variable width",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
