@@ -71,6 +71,4 @@ namespace Quill {
     #include "quill_monoraster_impl.h"
 
     #include "quill_stroker_impl.h"
-
-
-};
+}
