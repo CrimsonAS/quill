@@ -37,7 +37,7 @@
 
 struct VaryingNoop
 {
-    VaryingNoop(float = 0.0f, float = 0.0f) {};
+    VaryingNoop(float = 0.0f, float = 0.0f) { }
 };
 
 
