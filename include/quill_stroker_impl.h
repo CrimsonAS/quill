@@ -134,18 +134,29 @@ void Stroker<Rasterizer, VaryingGenerator>::lineTo(float x, float y)
               line.y0 - ndy * lhw,
               line.x1 - ndx * chw,
               line.y1 - ndy * chw);
-
-    if (m_lastSegment.type == LineToSegment) {
-        join(m_lastLeft, m_lastRight, left, right, m_lastSegment.leftVarying, m_lastSegment.rightVarying);
-    }
-
     length += len;
     Varyings leftVarying = varying.left(length, chw);
     Varyings rightVarying = varying.right(length, chw);
 
-    stroke(left, right,
-           m_lastSegment.leftVarying, m_lastSegment.rightVarying,
-           leftVarying, rightVarying);
+    const float mw = std::max(m_lastSegment.width, width);
+    const float x0 = minx - mw;
+    const float y0 = miny - mw;
+    const float x1 = maxx + mw;
+    const float y1 = maxy + mw;
+    const bool outside = (m_lastSegment.x < x0 && x < x0)
+                            || (m_lastSegment.y < y0 && y < y0)
+                            || (m_lastSegment.x > x1 && x > x1)
+                            || (m_lastSegment.y > y1 && y > y1);
+
+    if (!outside) {
+        if (m_lastSegment.type == LineToSegment) {
+            join(m_lastLeft, m_lastRight, left, right, m_lastSegment.leftVarying, m_lastSegment.rightVarying);
+        }
+
+        stroke(left, right,
+               m_lastSegment.leftVarying, m_lastSegment.rightVarying,
+               leftVarying, rightVarying);
+    }
 
     if (m_lastSegment.type == MoveToSegment) {
         m_firstLeft = left;
