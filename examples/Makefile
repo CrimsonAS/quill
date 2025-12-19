@@ -6,7 +6,7 @@ CC		 := g++
 
 
 
-all: hello triangle strokelength mono_vs_lerp joinstyles rectclip triangles_in_line slant
+all: hello triangle strokelength mono_vs_lerp joinstyles rectclip triangles_in_line slant point_culling
 
 
 
@@ -34,6 +34,9 @@ triangles_in_line: triangles_in_line.cpp
 slant: slant.cpp
 	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) slant.cpp $(LIBS) -o slant
 
+point_culling: point_culling.cpp
+	$(CC) $(INCLUDES) $(CFLAGS) $(DEFINES) point_culling.cpp $(LIBS) -o point_culling
+
 clean:
 	@rm -f hello
 	@rm -f triangle
@@ -43,3 +46,4 @@ clean:
 	@rm -f rectclip
 	@rm -f triangles_in_line
 	@rm -f slant
+	@rm -f point_culling

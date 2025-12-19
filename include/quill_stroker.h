@@ -73,6 +73,11 @@ struct Stroker
     int triangleCount   = 0;
     float length        = 0.0f;
 
+    float minx = std::numeric_limits<float>::lowest();
+    float miny = std::numeric_limits<float>::lowest();
+    float maxx = std::numeric_limits<float>::max();
+    float maxy = std::numeric_limits<float>::max();
+
     Stroker();
     ~Stroker();
 
