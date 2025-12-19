@@ -35,8 +35,6 @@
 
 #pragma once
 
-#include <numbers>
-
 template <typename Rasterizer, typename VaryingGenerator>
 Stroker<Rasterizer, VaryingGenerator>::Segment::Segment(SegmentType type_,
                                                         float x_, float y_, float width_, float length_,
