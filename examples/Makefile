@@ -1,5 +1,5 @@
 INCLUDES := -I../include
-CFLAGS   := --std=c++17 -O2 -Wall
+CFLAGS   := --std=c++20 -O2 -Wall
 DEFINES  :=
 LIBS     :=
 CC		 := g++
