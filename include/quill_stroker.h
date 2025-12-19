@@ -65,7 +65,7 @@ struct Stroker
     CapStyle capStyle   = FlatCap;
     float width         = 1.0f;
 
-    std::optional<Slant> slant;
+    ::std::optional<Slant> slant;
 
     Rasterizer raster;
     VaryingGenerator varying;
